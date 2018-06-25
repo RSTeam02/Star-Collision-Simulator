@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #f1f1f1;
+        }    
+
+        </style>
+        <script src = "../jquery-3.2.1.min.js"></script>
+        <script src="import/class.js" type="module"></script>
+    </head>
+
+    <body>
+        <h2>Star-Collision Simulator</h2>
+        <div id = "display"></div>
+        <form>        
+            <input type="button" value="start/pause" id="startPause" /><br>
+            <input type="number" id="numb" value="1" min="1" max="50"><input type="button" value="generate" id="generate" />
+            <br><input type ="checkbox" id = "stroke" checked />stroke
+            <br><input type ="checkbox" id = "fill" checked />fill
+            <br><input type ="checkbox" id = "autofire" checked />autofire
+
+            <br>slow<input type="range" id = "speed" value="1" min ="1" max="10" id="startPause" />fast
+        </form>
+        <div id = "info"></div>
+    
+    </body>
+
+</html>

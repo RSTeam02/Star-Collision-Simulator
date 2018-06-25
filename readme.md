@@ -2,8 +2,10 @@
 
 + controller.js: 
     - generate canvas area
-    - generate random star objects
-    - control a random star object (arrows, strg keys) in all directions, 
+    - generate random star objects, number of objects is required (1 to 50)
+    - start or pause of shape movements
+    - choose speed of objects
+    - a random star object is assigned to userControl with arrow keys move the obj in all direction, ctrl shoots a bullet 
     - update frame move shapes (requestAnimationFrame) 
 
 + polygram.js:
@@ -17,5 +19,5 @@
 
 + shapeStatus.js (inherited class)
     - inherited by polygram.js, rectangle.js
-    - check every collision between objects, if detected change direction and rotation
+    - check every collision between objects, if detected change direction and rotation    
 
