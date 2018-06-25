@@ -1,5 +1,7 @@
 # Star-Collision Simulator
 
+Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
+
 + controller.js: 
     - generate canvas area
     - generate random star objects, number of objects is required (1 to 50)
