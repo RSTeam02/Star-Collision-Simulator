@@ -4,22 +4,26 @@ Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 
 + controller.js: 
     - generate canvas area
-    - generate random star objects, number of objects is required (1 to 50)
+    - generate random star objects, number of objects is required (1 to 50) => params are always given randomly
+    - generate rectangle object for bullets => static params
     - start or pause of shape movements
     - choose speed of objects
-    - a random star object is assigned to userControl: with arrow keys move the obj in all direction, ctrl shoots bullets 
+    - a random star object is assigned to userControl: with arrow keys, move the obj in all directions, ctrl shoots bullets 
     - update frame move shapes (requestAnimationFrame) 
 
 + polygram.js:
-    - generates a star polygon (also called polygram):
-    - required parameters: x/y pos, s (number of vertices), color in rgb, dy/dx (direction), r (radius), these params are always given randomly
+    - class for creating a star polygon instance (also known as polygram):
+    - required parameters: x/y pos, s (number of vertices), color in rgb, dy/dx (direction), r (radius)
 
 + rectangle.js:
-    - generates a rectangle
+    - class for creating a rectangle instance 
     - required parameters: x/y pos, color in rgb, width, height
-    - static params, given by user
+ 
 
-+ shapeStatus.js (inherited class)
++ shapeStatus.js (inherited class):
     - inherited by polygram.js, rectangle.js
     - check every collision between objects, if detected change direction and rotation    
 
++ view.js:
+    - class for creating a canvas area instance with info tag
+    
