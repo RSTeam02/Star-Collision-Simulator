@@ -5,7 +5,7 @@
     - generate random star objects, number of objects is required (1 to 50)
     - start or pause of shape movements
     - choose speed of objects
-    - a random star object is assigned to userControl with arrow keys move the obj in all direction, ctrl shoots a bullet 
+    - a random star object is assigned to userControl: with arrow keys move the obj in all direction, ctrl shoots bullets 
     - update frame move shapes (requestAnimationFrame) 
 
 + polygram.js:
