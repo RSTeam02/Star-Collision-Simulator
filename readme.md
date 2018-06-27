@@ -4,7 +4,12 @@ Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 
 + 27.06: 
     - switch between single visualization model or a set of objects
-    - visualization mode: select number of vertices of a star polygon (3 - 100), rotate object (optional), choose color with rgb sliders, (un)check fill/stroke
+    - visualization mode: 
+        - display single star polygon
+        - select number of vertices of a star polygon (3 - 100) 
+        - rotate object (optional) 
+        - choose color with rgb sliders 
+        - (un)check fill/stroke
 
 
 + controller.js: 
