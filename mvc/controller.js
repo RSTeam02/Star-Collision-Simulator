@@ -17,12 +17,23 @@ import { Polygram } from "./polygram.js";
 export class Controller {
 
     constructor() {
+
         this.view = new View();
         this.view.display();
-        this.canvasW = $("#test").attr("width");
-        this.canvasH = $("#test").attr("height");
+        this.shape = new Polygram($("#vert").val(), "Polygram");
+        this.modelCol = {
+            red: $("#red").attr("value", Math.random() * 256),
+            green: $("#green").attr("value", Math.random() * 256),
+            blue: $("#blue").attr("value", Math.random() * 256)
+        }
+        this.showHideHl();
+        this.canvasW_Set = $("#simCanvas").attr("width");
+        this.canvasH_Set = $("#simCanvas").attr("height");
+        this.canvasW_Model = $("#visuCanvas").attr("width");
+        this.canvasH_Model = $("#visuCanvas").attr("height");
         this.keyListener();
         this.isRunning = true;
+        this.isRunningModel = true;
         this.left = false;
         this.right = false;
         this.up = false;
@@ -32,6 +43,26 @@ export class Controller {
         this.bullet = new Rectangle("Bullet", true);
         this.nextBullet = true;
     }
+    /**
+     * 
+     * switch between contents 
+     */
+    showHideHl(event = undefined) {
+        let classCont = document.getElementsByClassName("cont");
+        let classLink = document.getElementsByClassName("link");
+        let currId = (event === undefined) ? "visu" : event.currentTarget.id;
+
+        for (let i = 0; i < classLink.length; i++) {
+            if (currId === classLink[i].id) {
+                $(classCont[i]).show();
+            } else {
+                $(classLink[i])
+                    .css("font-weight", "normal")
+                    .html($(classLink[i]).text());
+                $(classCont[i]).hide();
+            }
+        }
+    }
 
     /**
      * generate random Polygons, Polygrams with random parameters
@@ -39,8 +70,8 @@ export class Controller {
     rndShape() {
         let minX = 40;
         let minY = 30;
-        let maxX = this.canvasW - 50;
-        let maxY = this.canvasH - 50;
+        let maxX = this.canvasW_Set - 50;
+        let maxY = this.canvasH_Set - 50;
         let minW = 30;
         let minH = 30;
         let maxW = 60;
@@ -49,8 +80,8 @@ export class Controller {
         let maxR = 30;
         //random number of Polygon/gram sides
         let numberOfS = Math.floor((Math.random() * 13) + 4);
-        
-        let shape= new Polygram(numberOfS, "Polygram");
+
+        let shape = new Polygram(numberOfS, "Polygram");
         let w, h;
         let direction = [-1, 1];
         let shapeCol = {
@@ -69,7 +100,7 @@ export class Controller {
         shape.dx = direction[Math.floor(Math.random() * 2)];
         shape.dy = direction[Math.floor(Math.random() * 2)];
         shape.r = r;
-       
+
         return shape;
     }
 
@@ -77,6 +108,16 @@ export class Controller {
      * used keycodes (arrow keys, ctrl)
      */
     keyListener() {
+        $('.link').hover((event) => {
+            $(event.currentTarget).html(`<b>${$(event.currentTarget).text()}</b>`);
+        }, (event) => {
+            $(event.currentTarget).html($(event.currentTarget).text());
+        }).click((event) => {
+            this.showHideHl(event);
+            $(event.currentTarget)
+                .css("font-weight", "bold")
+                .html($(event.currentTarget).text());
+        });
         $(window).on("keydown keyup", (e) => {
 
             var pushed = (e.type === "keydown") ? true : false;
@@ -114,12 +155,12 @@ export class Controller {
             }
             this.shapeSet = new Array(numOfObj);
 
-            this.view.ctx.clearRect(0, 0, this.canvasW, this.canvasH);
+            this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
             //generate random shapes
             $("#numb").val(this.shapeSet.length)
             for (let i = 0; i < numOfObj; i++) {
                 this.shapeSet[i] = this.rndShape();
-                this.shapeSet[i].draw(this.view.ctx);
+                this.shapeSet[i].draw(this.view.ctxSet);
             }
 
             let shapeCol = {
@@ -130,13 +171,62 @@ export class Controller {
 
         });
 
+        $("#drawModel, .colClass").on("click input", () => {
+            this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
+            this.shape.s = $("#vert").val();
+
+            this.shape.stroke = $('#strokeModel').prop('checked');
+            this.shape.fill = $('#fillModel').prop('checked');
+            let w, h;
+            let direction = [-1, 1];
+            let x = this.canvasW_Model / 2;
+            let y = this.canvasH_Model / 2;
+            let r = 200;
+            this.modelCol = {
+                red: $("#red").val(),
+                green: $("#green").val(),
+                blue: $("#blue").val()
+            }
+            this.shape.col = this.modelCol;
+            this.shape.x = x;
+            this.shape.y = y;
+
+            this.shape.r = r;
+            this.shape.draw(this.view.ctxModel);
+        });
+
+        $(".fsSim").on("click", () => {
+            this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
+            for (let i = 0; i < this.shapeSet.length; i++) {
+                this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
+                this.shapeSet[i].fill = $('#fillSet').prop('checked');
+                this.shapeSet[i].draw(this.view.ctxSet);
+            }
+        });
+
+        $(".fsVisu").on("click", () => {
+            this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
+            this.shape.stroke = $('#strokeModel').prop('checked');
+            this.shape.fill = $('#fillModel').prop('checked');
+            this.shape.draw(this.view.ctxModel);
+
+        });
+
+
+
         /**
          * start/pause random movements with collision detection, select speed with slider
          */
         $("#startPause").on("click", () => {
             if (this.shapeSet !== undefined) {
                 this.isRunning = (this.isRunning) ? false : true;
-                this.updateFrame();
+                this.updateFrameSet();
+            }
+        });
+        $("#rotate").on("click", () => {
+            if (this.shape !== undefined) {
+                this.isRunningModel = (this.isRunningModel) ? false : true;
+                this.updateFrameModel();
             }
         });
 
@@ -148,25 +238,46 @@ export class Controller {
         });
 
     }
+    /**
+     * draw every frame (model)
+     */
+    updateFrameModel() {
+        this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
+        this.modelCol = {
+            red: $("#red").val(),
+            green: $("#green").val(),
+            blue: $("#blue").val()
+        }
+        this.shape.col = this.modelCol;
+        this.shape.stroke = $('#strokeModel').prop('checked');
+        this.shape.fill = $('#fillModel').prop('checked');
+        this.shape.draw(this.view.ctxModel);
+        if (this.shape.s > 2) {
+            this.shape.angle += this.shape.rotate * Math.PI / 360;
+        }
+        (!this.isRunningModel)
+            ? window.requestAnimationFrame(this.updateFrameModel.bind(this))
+            : window.cancelAnimationFrame(() => { this.updateFrameModel(); });
 
+    }
 
     /**
      * draw every frame, check collision of every shape
      */
-    updateFrame() {
-        this.view.ctx.clearRect(0, 0, this.canvasW, this.canvasH);
+    updateFrameSet() {
+        this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
 
         for (let i = 0; i < this.shapeSet.length; i++) {
             this.userControl(this.shapeSet[0]);
-            this.shapeSet[i].stroke = $('#stroke').prop('checked');
-            this.shapeSet[i].fill = $('#fill').prop('checked');
+            this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
+            this.shapeSet[i].fill = $('#fillSet').prop('checked');
             if (!this.shapeSet[i].hit) {
-                this.shapeSet[i].draw(this.view.ctx);
-                if (this.bullet.x < this.canvasW) {
+                this.shapeSet[i].draw(this.view.ctxSet);
+                if (this.bullet.x < this.canvasW_Set) {
                     if (i !== 0) {
                         if (!this.bullet.hit) {
                             this.bulletCollShape(this.bullet, this.shapeSet[i]);
-                            this.bullet.draw(this.view.ctx);
+                            this.bullet.draw(this.view.ctxSet);
                         }
                     }
                 } else {
@@ -191,12 +302,12 @@ export class Controller {
                 this.shapeSet[i].angle += this.shapeSet[i].rotate * Math.PI / 36;
             }
         }
-        if (this.bullet.x < this.canvasW) {
+        if (this.bullet.x < this.canvasW_Set) {
             this.bullet.moveShape();
         }
         (!this.isRunning)
-            ? window.requestAnimationFrame(this.updateFrame.bind(this))
-            : window.cancelAnimationFrame(() => { this.updateFrame(); });
+            ? window.requestAnimationFrame(this.updateFrameSet.bind(this))
+            : window.cancelAnimationFrame(() => { this.updateFrameSet(); });
 
     }
 
@@ -281,11 +392,11 @@ export class Controller {
         if (typeof shape.r !== "undefined") {
             cdiffX = shape.w = shape.h = shape.r;
         }
-        if (shape.x + shape.dx > this.canvasW - shape.w || -cdiffX + shape.x + shape.dx < 0) {
+        if (shape.x + shape.dx > this.canvasW_Set - shape.w || -cdiffX + shape.x + shape.dx < 0) {
             shape.dx = -shape.dx;
             shape.rotateDir();
         }
-        if (shape.y + shape.dy > this.canvasH - shape.h || -cdiffX + shape.y + shape.dy < 0) {
+        if (shape.y + shape.dy > this.canvasH_Set - shape.h || -cdiffX + shape.y + shape.dy < 0) {
             shape.dy = -shape.dy;
             shape.rotateDir();
         }

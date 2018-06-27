@@ -1,34 +1,106 @@
 <!doctype html>
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-        <style>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
         canvas {
             border: 1px solid #d3d3d3;
             background-color: #f1f1f1;
-        }    
+        }
 
-        </style>
-        <script src = "https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="import/class.js" type="module"></script>
-    </head>
+        th,
+        td {
+            font-size: 3em;
+            padding-right: .6em;
+        }
 
-    <body>
-        <h2>Star-Collision Simulator</h2>
-        <div id = "display"></div>
-        <form>        
-            <input type="button" value="start/pause" id="startPause" /><br>
-            <input type="number" id="numb" value="1" min="1" max="50"><input type="button" value="generate" id="generate" />
-            <br><input type ="checkbox" id = "stroke" checked />stroke
-            <br><input type ="checkbox" id = "fill" checked />fill
-            <br><input type ="checkbox" id = "autofire" checked />autofire
+        ul#nav li a {
+            font-weight: normal;
+        }
 
-            <br>slow<input type="range" id = "speed" value="1" min ="1" max="10" id="startPause" />fast
+
+        ul#nav li {
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        ul#nav li a {
+            font-size: 25px;
+            color: black;
+            padding: 10px 10px 10px 10px;
+            border: 1px solid black;
+        }
+
+
+        ul#nav li {
+            display: inline;
+        }
+
+        ul#nav {
+
+            margin: auto;
+            padding: 5px 5%;
+            text-align: center;
+        }
+    </style>
+    <script src="../jquery-3.2.1.min.js"></script>
+    <script src="import/class.js" type="module"></script>
+</head>
+
+<body>
+    <h2>Star-Collision Simulator</h2>
+    <ul id="nav">
+        <li>
+            <a class="link" id="visu">Visualization</a>
+        </li>
+        <li>
+            <a class="link" id="sim">Collision-Sim</a>
+        </li>
+
+    </ul>
+    <br>
+    <div id="visuCont" class="cont">
+        <canvas id="visuCanvas"></canvas>
+        <form>
+            Number of vertices:
+            <input type="number" id="vert" value="3" min="3" max="100">
+            <br>
+            <input type="button" value="draw" id="drawModel" />
+            <input type="button" value="(un)rotate" id="rotate" />
+            <br>
+            <input type="checkbox" id="strokeModel" class="fsVisu" checked />stroke
+            <br>
+            <input type="checkbox" id="fillModel" class="fsVisu" checked />fill
+            <br>
+            Red: <input class="colClass" type="range" min="0" max="255" value="0" id="red"><br>
+            Green: <input class="colClass" type="range" min="0" max="255" value="0" id="green"><br>
+            Blue: <input class="colClass" type="range" min="0" max="255" value="0" id="blue"><br>
+
+
         </form>
-        <div id = "info"></div>
-    
-    </body>
+    </div>
+    <div id="simCont" class="cont">
+        <canvas id="simCanvas"></canvas>
+        <form>
+            <input type="number" id="numb" value="1" min="1" max="50">
+            <input type="button" value="generate" id="generate" />
+            <br>
+            <input type="button" value="start/pause" id="startPause" />
+            <br>
+            <input type="checkbox" id="strokeSet" class="fsSim" checked />stroke
+            <br>
+            <input type="checkbox" id="fillSet" class="fsSim" checked />fill
+            <br>
+            <input type="checkbox" id="autofire" checked />autofire
+
+            <br>slow
+            <input type="range" id="speed" value="1" min="1" max="10" id="startPause" />fast
+        </form>
+        <div id="info"></div>
+    </div>
+
+</body>
 
 </html>
