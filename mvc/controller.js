@@ -21,17 +21,23 @@ export class Controller {
         this.view = new View();
         this.view.display();
         this.shape = new Polygram($("#vert").val(), "Polygram");
+        
         this.modelCol = {
-            red: $("#red").attr("value", Math.random() * 256),
-            green: $("#green").attr("value", Math.random() * 256),
-            blue: $("#blue").attr("value", Math.random() * 256)
+            red: $("#red").val(Math.random() * 256),
+            green: $("#green").val(Math.random() * 256),
+            blue: $("#blue").val(Math.random() * 256)
         }
+        $("#redInfo").html(`${$("#red").val()}`);
+        $("#greenInfo").html(`${$("#green").val()}`);
+        $("#blueInfo").html(`${$("#blue").val()}`);
+        $("#radiusInfo").html(`${$("#radius").val()}`);
         this.showHideHl();
         this.canvasW_Set = $("#simCanvas").attr("width");
         this.canvasH_Set = $("#simCanvas").attr("height");
         this.canvasW_Model = $("#visuCanvas").attr("width");
         this.canvasH_Model = $("#visuCanvas").attr("height");
         this.keyListener();
+        this.previewShape();
         this.isRunning = true;
         this.isRunningModel = true;
         this.left = false;
@@ -42,6 +48,7 @@ export class Controller {
         this.bulletFreq = 0;
         this.bullet = new Rectangle("Bullet", true);
         this.nextBullet = true;
+       
     }
     /**
      * 
@@ -118,7 +125,8 @@ export class Controller {
                 .css("font-weight", "bold")
                 .html($(event.currentTarget).text());
         });
-        $(window).on("keydown keyup", (e) => {
+        $("#simCont").on("keydown keyup", (e) => {
+            e.preventDefault();
 
             var pushed = (e.type === "keydown") ? true : false;
             if (e.keyCode == 37) {
@@ -136,7 +144,9 @@ export class Controller {
             if (e.keyCode == 17) {
                 this.shot = pushed;
                 if (e.type === "keyup") { this.bulletFreq = 0; };
+
             }
+            e.target.focus({ preventScroll: false });
         });
         /**
          * select number of shapes and generate
@@ -160,6 +170,8 @@ export class Controller {
             $("#numb").val(this.shapeSet.length)
             for (let i = 0; i < numOfObj; i++) {
                 this.shapeSet[i] = this.rndShape();
+                this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
+                this.shapeSet[i].fill = $('#fillSet').prop('checked');
                 this.shapeSet[i].draw(this.view.ctxSet);
             }
 
@@ -171,28 +183,8 @@ export class Controller {
 
         });
 
-        $("#drawModel, .colClass").on("click input", () => {
-            this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
-            this.shape.s = $("#vert").val();
-
-            this.shape.stroke = $('#strokeModel').prop('checked');
-            this.shape.fill = $('#fillModel').prop('checked');
-            let w, h;
-            let direction = [-1, 1];
-            let x = this.canvasW_Model / 2;
-            let y = this.canvasH_Model / 2;
-            let r = 200;
-            this.modelCol = {
-                red: $("#red").val(),
-                green: $("#green").val(),
-                blue: $("#blue").val()
-            }
-            this.shape.col = this.modelCol;
-            this.shape.x = x;
-            this.shape.y = y;
-
-            this.shape.r = r;
-            this.shape.draw(this.view.ctxModel);
+        $("#radius, #vert, .colClass").on("click input", () => {
+            this.previewShape();
         });
 
         $(".fsSim").on("click", () => {
@@ -237,6 +229,30 @@ export class Controller {
             }
         });
 
+    }
+    previewShape() {
+        this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
+        this.shape.s = $("#vert").val();
+        this.shape.stroke = $('#strokeModel').prop('checked');
+        this.shape.fill = $('#fillModel').prop('checked');
+        let w, h;
+        let direction = [-1, 1];
+        let x = this.canvasW_Model / 2;
+        let y = this.canvasH_Model / 2;
+        this.modelCol = {
+            red: $("#red").val(),
+            green: $("#green").val(),
+            blue: $("#blue").val()
+        }
+        $("#redInfo").html(`${$("#red").val()}`);
+        $("#greenInfo").html(`${$("#green").val()}`);
+        $("#blueInfo").html(`${$("#blue").val()}`);
+        $("#radiusInfo").html(`${$("#radius").val()}`);
+        this.shape.col = this.modelCol;
+        this.shape.x = x;
+        this.shape.y = y;
+        this.shape.r = $("#radius").val();
+        this.shape.draw(this.view.ctxModel);
     }
     /**
      * draw every frame (model)
@@ -351,16 +367,24 @@ export class Controller {
      */
     userControl(shape) {
         if (this.left) {
-            shape.x -= 1;
+            if (shape.x - shape.r > 0) {
+                shape.x -= 1;
+            }
         }
         if (this.right) {
-            shape.x += 1;
+            if (shape.x + shape.r < this.canvasW_Set) {
+                shape.x += 1;
+            }
         }
         if (this.up) {
-            shape.y -= 1;
+            if (shape.y - shape.r > 0) {
+                shape.y -= 1;
+            }
         }
         if (this.down) {
-            shape.y += 1;
+            if (shape.y + shape.r < this.canvasH_Set) {
+                shape.y += 1;
+            }
         }
         if (this.shot) {
             if (this.bulletFreq % 20 === 0) {

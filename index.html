@@ -45,7 +45,7 @@
             text-align: center;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../jquery-3.2.1.min.js"></script>
     <script src="import/class.js" type="module"></script>
 </head>
 
@@ -67,18 +67,24 @@
             Number of vertices:
             <input type="number" id="vert" value="3" min="3" max="100">
             <br>
-            <input type="button" value="draw" id="drawModel" />
-            <input type="button" value="(un)rotate" id="rotate" />
+           
+     
+             Red:
+            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="red"><span id="redInfo"></span>
+            <br> Green:
+            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="green"><span id="greenInfo"></span>
+            <br> Blue:
+            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="blue"><span id="blueInfo"></span>
+            
+            <br>Radius:
+            <input type="range" value="200" min="10" max="1000" value="0" id="radius"><span id="radiusInfo"></span>
             <br>
+                   
             <input type="checkbox" id="strokeModel" class="fsVisu" checked />stroke
             <br>
             <input type="checkbox" id="fillModel" class="fsVisu" checked />fill
-            <br> Red:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="red">
-            <br> Green:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="green">
-            <br> Blue:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="blue">
+            <br>
+            <input type="button" value="(un)rotate" id="rotate" />
             <br>
 
 

@@ -1,9 +1,13 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 28.06:
+    - limit user direction controls within the canvas area
+    - prevent page scrolling when using arrow keys (focus on content with tab key)
+    - set radius in visualization mode
 
 + 27.06: 
-    - switch between single visualization model or a set of objects
+    - switch between single visualization model and set of objects
     - visualization mode: 
         - display single star polygon
         - select number of vertices of a star polygon (3 - 100) 

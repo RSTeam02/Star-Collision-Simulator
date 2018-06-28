@@ -18,8 +18,8 @@ export class ShapeStatus {
         this.shapeInfo = shapeInfo;
         this.bullet = bullet;
         this.rotate = 1;
-        this.stroke = true;
-        this.fill = true;
+        this.stroke = false;
+        this.fill = false;
     }
 
     visualNoise() {
