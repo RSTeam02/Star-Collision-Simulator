@@ -21,7 +21,7 @@ export class Controller {
         this.view = new View();
         this.view.display();
         this.shape = new Polygram($("#vert").val(), "Polygram");
-        
+
         this.modelCol = {
             red: $("#red").val(Math.random() * 256),
             green: $("#green").val(Math.random() * 256),
@@ -39,7 +39,7 @@ export class Controller {
         this.keyListener();
         this.previewShape();
         this.isRunning = true;
-        this.isRunningModel = true;
+        this.isRunningModel = false;
         this.left = false;
         this.right = false;
         this.up = false;
@@ -48,7 +48,7 @@ export class Controller {
         this.bulletFreq = 0;
         this.bullet = new Rectangle("Bullet", true);
         this.nextBullet = true;
-       
+
     }
     /**
      * 
@@ -183,7 +183,7 @@ export class Controller {
 
         });
 
-        $("#radius, #vert, .colClass").on("click input", () => {
+        $("#rotate, #radius, #vert, .colClass").on("click input", () => {
             this.previewShape();
         });
 
@@ -215,10 +215,12 @@ export class Controller {
                 this.updateFrameSet();
             }
         });
-        $("#rotate").on("click", () => {
-            if (this.shape !== undefined) {
-                this.isRunningModel = (this.isRunningModel) ? false : true;
-                this.updateFrameModel();
+        $("#rotate").on("input", () => {
+            if (this.shape !== undefined) {               
+                if (!this.isRunningModel) {
+                    this.updateFrameModel();
+                    this.isRunningModel = true;
+                }
             }
         });
 
@@ -248,6 +250,7 @@ export class Controller {
         $("#greenInfo").html(`${$("#green").val()}`);
         $("#blueInfo").html(`${$("#blue").val()}`);
         $("#radiusInfo").html(`${$("#radius").val()}`);
+        $("#rotateInfo").html(`${$("#rotate").val()}`);
         this.shape.col = this.modelCol;
         this.shape.x = x;
         this.shape.y = y;
@@ -258,6 +261,7 @@ export class Controller {
      * draw every frame (model)
      */
     updateFrameModel() {
+
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
         this.modelCol = {
             red: $("#red").val(),
@@ -268,13 +272,15 @@ export class Controller {
         this.shape.stroke = $('#strokeModel').prop('checked');
         this.shape.fill = $('#fillModel').prop('checked');
         this.shape.draw(this.view.ctxModel);
-        if (this.shape.s > 2) {
-            this.shape.angle += this.shape.rotate * Math.PI / 360;
+        if ($("#rotate").val() == 0) {
+            this.isRunningModel = false;
+            window.cancelAnimationFrame(() => { this.updateFrameModel(); });
+        } else {
+            if (this.shape.s > 2) {
+                this.shape.angle += Math.PI * ($("#rotate").val()) / 360;
+            }
+            window.requestAnimationFrame(this.updateFrameModel.bind(this))
         }
-        (!this.isRunningModel)
-            ? window.requestAnimationFrame(this.updateFrameModel.bind(this))
-            : window.cancelAnimationFrame(() => { this.updateFrameModel(); });
-
     }
 
     /**

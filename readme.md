@@ -1,6 +1,8 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 29.06:
+    - range rotation slider in both directions (counter)clockwise
 + 28.06:
     - limit user direction controls within the canvas area
     - prevent page scrolling when using arrow keys (focus on content with tab key)

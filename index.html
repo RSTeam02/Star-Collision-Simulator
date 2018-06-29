@@ -70,22 +70,23 @@
            
      
              Red:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="red"><span id="redInfo"></span>
+            <input class="colClass" type="range" min="0" max="255" value="0" id="red"><span id="redInfo"></span>
             <br> Green:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="green"><span id="greenInfo"></span>
+            <input class="colClass" type="range" min="0" max="255" value="0" id="green"><span id="greenInfo"></span>
             <br> Blue:
-            <input class="colClass" type="range" value="1" min="0" max="255" value="0" id="blue"><span id="blueInfo"></span>
+            <input class="colClass" type="range" min="0" max="255" value="0" id="blue"><span id="blueInfo"></span>
             
             <br>Radius:
-            <input type="range" value="200" min="10" max="1000" value="0" id="radius"><span id="radiusInfo"></span>
+            <input type="range" min="10" max="1000" value="200" id="radius"><span id="radiusInfo"></span>
+            <br>Rotation:
+            <input type="range" value="0" min="-10" max="10" id="rotate" step = "1"><span id="rotateInfo"></span>
             <br>
                    
             <input type="checkbox" id="strokeModel" class="fsVisu" checked />stroke
             <br>
             <input type="checkbox" id="fillModel" class="fsVisu" checked />fill
             <br>
-            <input type="button" value="(un)rotate" id="rotate" />
-            <br>
+            
 
 
         </form>
