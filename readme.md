@@ -2,7 +2,9 @@
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 + 01.07:
-    - improved collision info reception
+    - limit collison log up to 10 entries
+    - show/hide collision log
+    - improved collision info feedback
 + 29.06:
     - range rotation slider in both directions (counter)clockwise
 + 28.06:

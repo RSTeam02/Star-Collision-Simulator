@@ -130,6 +130,12 @@ export class Controller {
      * used keycodes (arrow keys, ctrl)
      */
     keyListener() {
+        $("#colllog").click(function () {
+            (this.checked)
+                ? $("#info").show()
+                : $("#info").hide();
+        });
+
         $('.link').hover((event) => {
             $(event.currentTarget).html(`<b>${$(event.currentTarget).text()}</b>`);
         }, (event) => {
@@ -168,6 +174,7 @@ export class Controller {
          */
         $("#generate").on("click", () => {
             //select number of shapes
+            $("#info").html("");
             let currentVal = parseInt($("#numb").val());
             let maxObj = parseInt($("#numb").attr("max"));
             let minObj = parseInt($("#numb").attr("min"));
@@ -352,20 +359,17 @@ export class Controller {
         if (shape1.shapeCollision(shape2)) {
             shape1.rotateDir();
             shape2.rotateDir();
-            $("#info").append(`${shape1.name} collided with ${shape2.name}\n`)
-            setTimeout(() => {
-                $("#info").html("");
-            }, 5000);
+            $("#info").prepend(`<pre>${shape1.name} collided with ${shape2.name}</pre>`);
+            $('div pre:gt(9)').remove();
         }
     }
 
     bulletCollShape(bullet, shape) {
         if (bullet.shapeCollision(shape)) {
             this.nextBullet = true;
-            $("#info").html(`${shape.name} was pulverized by a ${bullet.name}\n`);
+            $("#info").prepend(`<pre>${shape.name} was pulverized by a ${bullet.name}</pre>`);
             shape.explosion = true;
             setTimeout(() => {
-                $("#info").html("");
                 shape.hit = true;
             }, 1000);
             bullet.hit = true;

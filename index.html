@@ -9,7 +9,7 @@
             border: 1px solid #d3d3d3;
             background-color: #f1f1f1;
         }
-
+        
         th,
         td {
             font-size: 3em;
@@ -48,7 +48,8 @@
         #info{
             right:0;
             top: 0;
-            position: fixed;   
+            position: fixed;  
+            list-style-type: none; 
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -72,10 +73,7 @@
         <form>
             Number of vertices:
             <input type="number" id="vert" value="3" min="3" max="100">
-            <br>
-           
-     
-             Red:
+            <br> Red:
             <input class="colClass" type="range" min="0" max="255" value="0" id="red"><span id="redInfo"></span>
             <br> Green:
             <input class="colClass" type="range" min="0" max="255" value="0" id="green"><span id="greenInfo"></span>
@@ -86,8 +84,7 @@
             <input type="range" min="10" max="1000" value="200" id="radius"><span id="radiusInfo"></span>
             <br>Rotation:
             <input type="range" value="0" min="-10" max="10" id="rotate" step = "1"><span id="rotateInfo"></span>
-            <br>
-                   
+            <br>                   
             <input type="checkbox" id="strokeModel" class="fsVisu" checked />stroke
             <br>
             <input type="checkbox" id="fillModel" class="fsVisu" checked />fill
@@ -110,11 +107,14 @@
             <input type="checkbox" id="fillSet" class="fsSim" checked />fill
             <br>
             <input type="checkbox" id="autofire" checked />autofire
+            <br>
+            <input type="checkbox" id="colllog" checked />collision log
+
 
             <br>slow
             <input type="range" id="speed" value="1" min="1" max="10" id="startPause" />fast
         </form>
-        <pre id="info"></pre>
+        <div id="info"></div>
     </div>
 
 </body>

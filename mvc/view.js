@@ -12,7 +12,4 @@ export class View{
         this.ctxSet = canvas1[0].getContext("2d");
     }
 
-    info(info){
-        $("#info").html(info);
-    }
 }
