@@ -44,6 +44,12 @@
             padding: 5px 5%;
             text-align: center;
         }
+        
+        #info{
+            right:0;
+            top: 0;
+            position: fixed;   
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="import/class.js" type="module"></script>
@@ -108,7 +114,7 @@
             <br>slow
             <input type="range" id="speed" value="1" min="1" max="10" id="startPause" />fast
         </form>
-        <div id="info"></div>
+        <pre id="info"></pre>
     </div>
 
 </body>

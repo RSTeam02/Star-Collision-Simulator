@@ -85,10 +85,12 @@ export class Controller {
         let maxH = 60;
         let minR = 15;
         let maxR = 30;
-        //random number of Polygon/gram sides
-        let numberOfS = Math.floor((Math.random() * 13) + 4);
 
-        let shape = new Polygram(numberOfS, "Polygram");
+        let polygramInfo = ["Hen", "Do", "Tri", "Tetra", "Penta", "Hexa", "Hepta", "Octa", "Nona", "Deca"];
+        //random number of Polygram vertices  3 - 16
+        let numberOfS = Math.floor((Math.random() * 14) + 3);
+
+        let shape = new Polygram(numberOfS, "");
         let w, h;
         let direction = [-1, 1];
         let shapeCol = {
@@ -101,6 +103,19 @@ export class Controller {
         w = h = Math.floor(Math.random() * (maxW - minW) + minW);
         let r = Math.floor(Math.random() * (maxR - minR) + minR);
 
+
+        if (numberOfS == 3) {
+            shape.name = "Triangle";
+        }
+        if (numberOfS == 4) {
+            shape.name = "Square";
+        }
+        if (numberOfS > 4 && numberOfS <= 10) {
+            shape.name = `${polygramInfo[numberOfS - 1]}gram`;
+        }
+        if (numberOfS > 10) {
+            shape.name = `${polygramInfo[numberOfS % 10 - 1]}decagram`;
+        }
         shape.col = shapeCol;
         shape.x = x;
         shape.y = y;
@@ -216,7 +231,7 @@ export class Controller {
             }
         });
         $("#rotate").on("input", () => {
-            if (this.shape !== undefined) {               
+            if (this.shape !== undefined) {
                 if (!this.isRunningModel) {
                     this.updateFrameModel();
                     this.isRunningModel = true;
@@ -337,17 +352,17 @@ export class Controller {
         if (shape1.shapeCollision(shape2)) {
             shape1.rotateDir();
             shape2.rotateDir();
-            $("#info").html(`${shape1.name} collided with ${shape2.name}`)
+            $("#info").append(`${shape1.name} collided with ${shape2.name}\n`)
             setTimeout(() => {
                 $("#info").html("");
-            }, 2000);
+            }, 5000);
         }
     }
 
     bulletCollShape(bullet, shape) {
         if (bullet.shapeCollision(shape)) {
             this.nextBullet = true;
-            $("#info").html(`${bullet.name} collided with ${shape.name}`)
+            $("#info").html(`${shape.name} was pulverized by a ${bullet.name}\n`);
             shape.explosion = true;
             setTimeout(() => {
                 $("#info").html("");

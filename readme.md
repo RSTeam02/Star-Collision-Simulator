@@ -1,6 +1,8 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 01.07:
+    - improved collision info reception
 + 29.06:
     - range rotation slider in both directions (counter)clockwise
 + 28.06:
