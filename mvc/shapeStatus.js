@@ -15,6 +15,7 @@ export class ShapeStatus {
         this.name = name;
         this.hit = false;
         this.explosion = false;
+        this.explosionEffect = false;
         this.shapeInfo = shapeInfo;
         this.bullet = bullet;
         this.rotate = 1;
@@ -23,7 +24,7 @@ export class ShapeStatus {
     }
 
     visualNoise() {
-        let noiseArr = ["bang!", "flush!", "boom!", "zack!", "zapp!", "blopp!"];
+        let noiseArr = ["^", "°", "*", "#", ".", "+", "!", "KABOOM!"];
         let rnd = Math.floor(Math.random() * noiseArr.length);
         return noiseArr[rnd];
     }

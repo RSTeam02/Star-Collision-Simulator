@@ -11,7 +11,6 @@ export class Polygram extends ShapeStatus {
         super("polygram", name, bullet);
         this.s = s;
         this.bullet = bullet;
-        this.vnoise = super.visualNoise();
         this.angle = 0;
         this.rotate = 1;
     }
@@ -36,7 +35,6 @@ export class Polygram extends ShapeStatus {
                     this.angle += delta;
                 }
             }
-
             ctx.lineTo(this.x + this.r * Math.sin(this.angle), this.y - this.r * Math.cos(this.angle));
 
         }
@@ -44,6 +42,13 @@ export class Polygram extends ShapeStatus {
             if (this.fill) {
                 ctx.fillStyle = `rgb(${this.col.red}, ${this.col.green}, ${this.col.blue})`;
                 ctx.fill();
+            }
+        } else {
+            if (this.explosionEffect) {
+                ctx.font = "30px Comic Sans MS";
+                ctx.fillStyle = "black";
+                ctx.textAlign = "center";
+                ctx.fillText(super.visualNoise(), this.x + Math.floor(Math.random() * 100) - 50, this.y + Math.floor(Math.random() * 100) - 50);
             }
         }
         if (this.stroke) {

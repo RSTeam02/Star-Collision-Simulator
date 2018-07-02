@@ -172,50 +172,38 @@ export class Controller {
         /**
          * select number of shapes and generate
          */
-        $("#generate").on("click", () => {
-            //select number of shapes
-            $("#info").html("");
-            let currentVal = parseInt($("#numb").val());
-            let maxObj = parseInt($("#numb").attr("max"));
-            let minObj = parseInt($("#numb").attr("min"));
-            let numOfObj = 0;
-            //this.removeShape();
-            if (currentVal > maxObj) {
-                numOfObj = maxObj;
-            } else {
-                numOfObj = (currentVal < 1) ? minObj : currentVal;
+        $("#generate, .fsSim").on("click", (e) => {
+            if (e.currentTarget.className !== "fsSim") {
+                //select number of shapes
+                $("#info").html("");
+                let currentVal = parseInt($("#numb").val());
+                let maxObj = parseInt($("#numb").attr("max"));
+                let minObj = parseInt($("#numb").attr("min"));
+                let numOfObj = 0;
+                //this.removeShape();
+                if (currentVal > maxObj) {
+                    numOfObj = maxObj;
+                } else {
+                    numOfObj = (currentVal < 1) ? minObj : currentVal;
+                }
+                this.shapeSet = new Array(numOfObj);
+                //generate random shapes
+                $("#numb").val(this.shapeSet.length)
+                for (let i = 0; i < numOfObj; i++) {
+                    this.shapeSet[i] = this.rndShape();
+                }
             }
-            this.shapeSet = new Array(numOfObj);
-
-            this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
-            //generate random shapes
-            $("#numb").val(this.shapeSet.length)
-            for (let i = 0; i < numOfObj; i++) {
-                this.shapeSet[i] = this.rndShape();
-                this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
-                this.shapeSet[i].fill = $('#fillSet').prop('checked');
-                this.shapeSet[i].draw(this.view.ctxSet);
-            }
-
-            let shapeCol = {
-                red: Math.floor(Math.random() * 256),
-                green: Math.floor(Math.random() * 256),
-                blue: Math.floor(Math.random() * 256)
-            }
-
-        });
-
-        $("#rotate, #radius, #vert, .colClass").on("click input", () => {
-            this.previewShape();
-        });
-
-        $(".fsSim").on("click", () => {
             this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
             for (let i = 0; i < this.shapeSet.length; i++) {
                 this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
                 this.shapeSet[i].fill = $('#fillSet').prop('checked');
+                this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
                 this.shapeSet[i].draw(this.view.ctxSet);
             }
+        });
+
+        $("#rotate, #radius, #vert, .colClass").on("click input", () => {
+            this.previewShape();
         });
 
         $(".fsVisu").on("click", () => {
@@ -225,8 +213,6 @@ export class Controller {
             this.shape.draw(this.view.ctxModel);
 
         });
-
-
 
         /**
          * start/pause random movements with collision detection, select speed with slider
@@ -346,6 +332,7 @@ export class Controller {
                 this.shapeSet[i].angle += this.shapeSet[i].rotate * Math.PI / 36;
             }
         }
+        $('div pre:gt(9)').remove();
         if (this.bullet.x < this.canvasW_Set) {
             this.bullet.moveShape();
         }

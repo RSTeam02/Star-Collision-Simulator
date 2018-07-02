@@ -1,6 +1,8 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 02.07:
+    - explosion effect added
 + 01.07:
     - limit collison log up to 10 entries
     - show/hide collision log
