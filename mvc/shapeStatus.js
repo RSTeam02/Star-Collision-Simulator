@@ -17,6 +17,7 @@ export class ShapeStatus {
         this.explosion = false;
         this.explosionEffect = false;
         this.shapeInfo = shapeInfo;
+        this.drag = false;
         this.bullet = bullet;
         this.rotate = 1;
         this.stroke = false;
@@ -29,7 +30,7 @@ export class ShapeStatus {
         return noiseArr[rnd];
     }
 
-    moveShape(canvasW) {
+    moveShape() {
         if (!this.bullet) {
             this.x += this.dx;
             this.y += this.dy;

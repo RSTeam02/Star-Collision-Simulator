@@ -1,6 +1,11 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 04.07:
+    - drag and drop shape objects with mouselistener:
+        - mousedown: pick up an object in canvas, stop movement when dragging
+        - mouseup: release an object in canvas, set new coordinates and continue movement => (drag == false)   
+    
 + 02.07:
     - explosion effect added
 + 01.07:

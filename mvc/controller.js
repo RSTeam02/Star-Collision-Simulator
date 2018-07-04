@@ -21,7 +21,9 @@ export class Controller {
         this.view = new View();
         this.view.display();
         this.shape = new Polygram($("#vert").val(), "Polygram");
-
+        this.dragShape = false;
+        this.startX = 0;
+        this.startY = 0;
         this.modelCol = {
             red: $("#red").val(Math.random() * 256),
             green: $("#green").val(Math.random() * 256),
@@ -35,7 +37,7 @@ export class Controller {
         this.canvasW_Set = $("#simCanvas").attr("width");
         this.canvasH_Set = $("#simCanvas").attr("height");
         this.canvasW_Model = $("#visuCanvas").attr("width");
-        this.canvasH_Model = $("#visuCanvas").attr("height");
+        this.canvasH_Model = $("#visuCanvas").attr("height");        
         this.keyListener();
         this.previewShape();
         this.isRunning = true;
@@ -135,6 +137,52 @@ export class Controller {
                 ? $("#info").show()
                 : $("#info").hide();
         });
+        /**
+         * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
+         */
+        $("#simCanvas").on("mousedown mouseup mousemove", (e) => {
+            e.preventDefault();
+            e.stopPropagation();            
+            if (e.type === "mousedown") {   
+                this.offsetTop = document.getElementById("simCanvas").offsetTop;
+                this.offsetLeft = document.getElementById("simCanvas").offsetLeft;
+                var mx = e.pageX - this.offsetLeft;
+                var my = e.pageY - this.offsetTop;
+                this.dragShape = false;
+                for (let i = 0; i < this.shapeSet.length; i++) {
+                    if (mx < this.shapeSet[i].x + this.shapeSet[i].r &&
+                        mx > this.shapeSet[i].x - this.shapeSet[i].r &&
+                        my < this.shapeSet[i].y + this.shapeSet[i].r &&
+                        my > this.shapeSet[i].y - this.shapeSet[i].r) {
+                        this.dragShape = true;
+                        this.shapeSet[i].drag = true;
+                    }
+                }
+            }
+            if (e.type === "mouseup") {   
+                for (let i = 0; i < this.shapeSet.length; i++) {
+                    this.shapeSet[i].drag = false;
+                }
+            }
+            if (e.type === "mousemove") {               
+                if (this.dragShape) {
+                    this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
+                    mx = e.pageX - this.offsetLeft;
+                    my = e.pageY - this.offsetTop;
+                    var dx = mx - this.startX;
+                    var dy = my - this.startY;
+                    for (let i = 0; i < this.shapeSet.length; i++) {
+                        if (this.shapeSet[i].drag) {
+                            this.shapeSet[i].x += dx;
+                            this.shapeSet[i].y += dy;
+                        }
+                        this.shapeSet[i].draw(this.view.ctxSet);
+                    }
+                }
+            }            
+            this.startX = mx;
+            this.startY = my;
+        });
 
         $('.link').hover((event) => {
             $(event.currentTarget).html(`<b>${$(event.currentTarget).text()}</b>`);
@@ -180,7 +228,6 @@ export class Controller {
                 let maxObj = parseInt($("#numb").attr("max"));
                 let minObj = parseInt($("#numb").attr("min"));
                 let numOfObj = 0;
-                //this.removeShape();
                 if (currentVal > maxObj) {
                     numOfObj = maxObj;
                 } else {
@@ -202,7 +249,10 @@ export class Controller {
             }
         });
 
-        $("#rotate, #radius, #vert, .colClass").on("click input", () => {
+        $("#rotate, #radius, #vert, .colClass").on("click input", (e) => {
+            if (e.currentTarget.id == "vert") {
+                this.shape.angle = 0;
+            }
             this.previewShape();
         });
 
@@ -238,8 +288,8 @@ export class Controller {
                 this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
             }
         });
-
     }
+
     previewShape() {
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
         this.shape.s = $("#vert").val();
@@ -269,7 +319,6 @@ export class Controller {
      * draw every frame (model)
      */
     updateFrameModel() {
-
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
         this.modelCol = {
             red: $("#red").val(),
@@ -325,7 +374,9 @@ export class Controller {
                 }
                 if (i !== 0) {
                     this.bounceShape(this.shapeSet[i]);
-                    this.shapeSet[i].moveShape();
+                    if (!this.shapeSet[i].drag) {
+                        this.shapeSet[i].moveShape();
+                    }
                 }
             }
             if (this.shapeSet[i].s > 2) {
@@ -347,7 +398,6 @@ export class Controller {
             shape1.rotateDir();
             shape2.rotateDir();
             $("#info").prepend(`<pre>${shape1.name} collided with ${shape2.name}</pre>`);
-            $('div pre:gt(9)').remove();
         }
     }
 
@@ -365,15 +415,6 @@ export class Controller {
         }
     }
 
-    removeShape() {
-        if (this.shapeSet !== undefined) {
-            if (this.shapeSet[i].hit) {
-                for (let i in this.shapeSet) {
-                    this.shapeSet = this.shapeSet.filter(item => item !== this.shapeSet[i]);
-                }
-            }
-        }
-    }
     /**
      * assign controls to a random shape object 
      */
@@ -410,7 +451,6 @@ export class Controller {
                     this.bullet = bullet;
                 }
             }
-
             if (!$('#autofire').prop('checked')) {
                 this.bulletFreq = 1;
             }
