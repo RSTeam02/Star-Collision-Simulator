@@ -37,7 +37,7 @@ export class Controller {
         this.canvasW_Set = $("#simCanvas").attr("width");
         this.canvasH_Set = $("#simCanvas").attr("height");
         this.canvasW_Model = $("#visuCanvas").attr("width");
-        this.canvasH_Model = $("#visuCanvas").attr("height");        
+        this.canvasH_Model = $("#visuCanvas").attr("height");
         this.keyListener();
         this.previewShape();
         this.isRunning = true;
@@ -137,38 +137,40 @@ export class Controller {
                 ? $("#info").show()
                 : $("#info").hide();
         });
+        $("#showAttr").click((e) => {
+            for (let i = 0; i < this.shapeSet.length; i++) {
+                this.shapeSet[i].showAttr = (e.currentTarget.checked) ? true : false;
+            }     
+        });
         /**
          * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
          */
         $("#simCanvas").on("mousedown mouseup mousemove", (e) => {
             e.preventDefault();
-            e.stopPropagation();            
-            if (e.type === "mousedown") {   
-                this.offsetTop = document.getElementById("simCanvas").offsetTop;
-                this.offsetLeft = document.getElementById("simCanvas").offsetLeft;
-                var mx = e.pageX - this.offsetLeft;
-                var my = e.pageY - this.offsetTop;
+            e.stopPropagation();
+            var offsetTop = document.getElementById("simCanvas").offsetTop;
+            var offsetLeft = document.getElementById("simCanvas").offsetLeft;
+            var mx = e.pageX - offsetLeft;
+            var my = e.pageY - offsetTop;
+            if (e.type === "mousedown") {
                 this.dragShape = false;
                 for (let i = 0; i < this.shapeSet.length; i++) {
-                    if (mx < this.shapeSet[i].x + this.shapeSet[i].r &&
-                        mx > this.shapeSet[i].x - this.shapeSet[i].r &&
-                        my < this.shapeSet[i].y + this.shapeSet[i].r &&
-                        my > this.shapeSet[i].y - this.shapeSet[i].r) {
+                    if (this.cursorPointObj(mx, my, this.shapeSet[i])) {
                         this.dragShape = true;
                         this.shapeSet[i].drag = true;
+
                     }
                 }
             }
-            if (e.type === "mouseup") {   
+            if (e.type === "mouseup") {
                 for (let i = 0; i < this.shapeSet.length; i++) {
                     this.shapeSet[i].drag = false;
                 }
             }
-            if (e.type === "mousemove") {               
+            if (e.type === "mousemove") {
                 if (this.dragShape) {
                     this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
-                    mx = e.pageX - this.offsetLeft;
-                    my = e.pageY - this.offsetTop;
+
                     var dx = mx - this.startX;
                     var dy = my - this.startY;
                     for (let i = 0; i < this.shapeSet.length; i++) {
@@ -179,7 +181,12 @@ export class Controller {
                         this.shapeSet[i].draw(this.view.ctxSet);
                     }
                 }
-            }            
+                if (this.shapeSet !== undefined) {
+                    for (let i = 0; i < this.shapeSet.length; i++) {
+                        this.shapeSet[i].hover = (this.cursorPointObj(mx, my, this.shapeSet[i])) ? true : false;
+                    }
+                }
+            }
             this.startX = mx;
             this.startY = my;
         });
@@ -288,6 +295,16 @@ export class Controller {
                 this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
             }
         });
+    }
+
+    cursorPointObj(mx, my, shape) {
+        if (mx < shape.x + shape.r &&
+            mx > shape.x - shape.r &&
+            my < shape.y + shape.r &&
+            my > shape.y - shape.r) {
+            return true;
+        }
+        return false;
     }
 
     previewShape() {

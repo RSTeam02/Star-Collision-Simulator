@@ -1,8 +1,11 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 05.07:
+    - display attributes of every object (Collision-Sim Mode) 
+        - hover on object => display type of shape and position coordinates (x/y)
 + 04.07:
-    - drag and drop shape objects with mouselistener (CollisionSim):
+    - drag and drop shape object with mouselistener (Collision-Sim Mode):
         - mousedown: pick up an object in canvas (and stop random movement when dragging) => (drag == true)
         - mousemove: return and set object coordinates when shape is moved, redraw every movement, clear last 
         - mouseup: release an object in canvas, keep last set coordinates (and continue last random movement) => (drag == false)   

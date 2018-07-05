@@ -17,7 +17,9 @@ export class ShapeStatus {
         this.explosion = false;
         this.explosionEffect = false;
         this.shapeInfo = shapeInfo;
+        this.showAttr = true;
         this.drag = false;
+        this.hover = false;
         this.bullet = bullet;
         this.rotate = 1;
         this.stroke = false;

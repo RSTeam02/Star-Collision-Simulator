@@ -43,6 +43,19 @@ export class Polygram extends ShapeStatus {
                 ctx.fillStyle = `rgb(${this.col.red}, ${this.col.green}, ${this.col.blue})`;
                 ctx.fill();
             }
+            let text = (this.name !== "Triangle" && this.name !== "Square") ? `${this.s}-pointed star (${this.name})` : `${this.name}`
+            if (this.showAttr) {
+                ctx.font = "12px Monospace";
+                ctx.fillStyle = "black";
+                ctx.textAlign = "left";
+                if (this.hover) {
+                    ctx.fillText(text, this.x + this.r, this.y);
+                    ctx.fillText(`position(x/y): ${this.x}/${this.y}`, this.x + this.r, this.y + 12);
+                } else {
+                    ctx.fillText("", this.x + this.r, this.y);
+                    ctx.fillText("", this.x + this.r, this.y + 12);
+                }
+            }
         } else {
             if (this.explosionEffect) {
                 ctx.font = "30px Comic Sans MS";
@@ -50,6 +63,7 @@ export class Polygram extends ShapeStatus {
                 ctx.textAlign = "center";
                 ctx.fillText(super.visualNoise(), this.x + Math.floor(Math.random() * 100) - 50, this.y + Math.floor(Math.random() * 100) - 50);
             }
+
         }
         if (this.stroke) {
             ctx.stroke();
