@@ -140,7 +140,7 @@ export class Controller {
         $("#showAttr").click((e) => {
             for (let i = 0; i < this.shapeSet.length; i++) {
                 this.shapeSet[i].showAttr = (e.currentTarget.checked) ? true : false;
-            }     
+            }
         });
         /**
          * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
@@ -158,7 +158,6 @@ export class Controller {
                     if (this.cursorPointObj(mx, my, this.shapeSet[i])) {
                         this.dragShape = true;
                         this.shapeSet[i].drag = true;
-
                     }
                 }
             }
@@ -170,7 +169,6 @@ export class Controller {
             if (e.type === "mousemove") {
                 if (this.dragShape) {
                     this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
-
                     var dx = mx - this.startX;
                     var dy = my - this.startY;
                     for (let i = 0; i < this.shapeSet.length; i++) {
@@ -225,7 +223,7 @@ export class Controller {
             e.target.focus({ preventScroll: false });
         });
         /**
-         * select number of shapes and generate
+         * select number and generate polygrams with random parameters
          */
         $("#generate, .fsSim").on("click", (e) => {
             if (e.currentTarget.className !== "fsSim") {
@@ -298,13 +296,10 @@ export class Controller {
     }
 
     cursorPointObj(mx, my, shape) {
-        if (mx < shape.x + shape.r &&
+        return (mx < shape.x + shape.r &&
             mx > shape.x - shape.r &&
             my < shape.y + shape.r &&
-            my > shape.y - shape.r) {
-            return true;
-        }
-        return false;
+            my > shape.y - shape.r) ? true : false;
     }
 
     previewShape() {
@@ -362,38 +357,33 @@ export class Controller {
      */
     updateFrameSet() {
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
-
         for (let i = 0; i < this.shapeSet.length; i++) {
             this.userControl(this.shapeSet[0]);
             this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
             this.shapeSet[i].fill = $('#fillSet').prop('checked');
-            if (!this.shapeSet[i].hit) {
-                this.shapeSet[i].draw(this.view.ctxSet);
-                if (this.bullet.x < this.canvasW_Set) {
-                    if (i !== 0) {
-                        if (!this.bullet.hit) {
-                            this.bulletCollShape(this.bullet, this.shapeSet[i]);
-                            this.bullet.draw(this.view.ctxSet);
-                        }
-                    }
-                } else {
-                    this.nextBullet = true;
-                }
-                for (let j = 0; j < this.shapeSet.length; j++) {
-                    if (i !== j) {
-                        if (!this.shapeSet[j].hit) {
-                            this.shapeCollShape(this.shapeSet[i], this.shapeSet[j]);
-                        }
-                    }
-                }
-                if (this.shapeSet[i].explosion) {
-                    this.shapeSet[i].dy = this.shapeSet[i].dx = 0;
-                }
+            this.shapeSet[i].draw(this.view.ctxSet);
+            if (this.bullet.x < this.canvasW_Set) {
                 if (i !== 0) {
-                    this.bounceShape(this.shapeSet[i]);
-                    if (!this.shapeSet[i].drag) {
-                        this.shapeSet[i].moveShape();
+                    if (!this.bullet.hit) {
+                        this.bulletCollShape(this.bullet, this.shapeSet[i]);
+                        this.bullet.draw(this.view.ctxSet);
                     }
+                }
+            } else {
+                this.nextBullet = true;
+            }
+            for (let j = 0; j < this.shapeSet.length; j++) {
+                if (i !== j) {
+                    this.shapeCollShape(this.shapeSet[i], this.shapeSet[j]);
+                }
+            }
+            if (this.shapeSet[i].explosion) {
+                this.shapeSet[i].dy = this.shapeSet[i].dx = 0;
+            }
+            if (i !== 0) {
+                this.bounceShape(this.shapeSet[i]);
+                if (!this.shapeSet[i].drag) {
+                    this.shapeSet[i].moveShape();
                 }
             }
             if (this.shapeSet[i].s > 2) {
@@ -418,13 +408,22 @@ export class Controller {
         }
     }
 
+    /**
+     * 
+     * @param {*} bullet 
+     * @param {*} shape 
+     * if bullet hits an object set explosion true and remove it from array with 1 sec delay
+     */
     bulletCollShape(bullet, shape) {
-        if (bullet.shapeCollision(shape)) {
+        if (bullet.shapeCollision(shape) && !shape.explosion) {
             this.nextBullet = true;
             $("#info").prepend(`<pre>${shape.name} was pulverized by a ${bullet.name}</pre>`);
             shape.explosion = true;
             setTimeout(() => {
-                shape.hit = true;
+                var index = this.shapeSet.indexOf(shape);
+                if (index >= 0) {
+                    this.shapeSet.splice(index, 1);
+                }
             }, 1000);
             bullet.hit = true;
         } else {
@@ -433,7 +432,7 @@ export class Controller {
     }
 
     /**
-     * assign controls to a random shape object 
+     * assign controls to a random shape object with index0 
      */
     userControl(shape) {
         if (this.left) {

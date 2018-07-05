@@ -4,6 +4,7 @@ Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 + 05.07:
     - display attributes of every object (Collision-Sim Mode) 
         - hover on object => display type of shape and position coordinates (x/y)
+    - remove object from array, when it was hit by bullet (arr.splice(index, 1))
 + 04.07:
     - drag and drop shape object with mouselistener (Collision-Sim Mode):
         - mousedown: pick up an object in canvas (and stop random movement when dragging) => (drag == true)
