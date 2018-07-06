@@ -19,7 +19,7 @@ export class Controller {
     constructor() {
 
         this.view = new View();
-        this.view.display();
+        //this.view.display();
         this.shape = new Polygram($("#vert").val(), "Polygram");
         this.dragShape = false;
         this.startX = 0;
@@ -142,6 +142,11 @@ export class Controller {
                 this.shapeSet[i].showAttr = (e.currentTarget.checked) ? true : false;
             }
         });
+        $("#showAllAttr").click((e) => {
+            for (let i = 0; i < this.shapeSet.length; i++) {
+                this.shapeSet[i].showAllAttr = (e.currentTarget.checked) ? true : false;
+            }
+        });
         /**
          * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
          */
@@ -176,7 +181,7 @@ export class Controller {
                             this.shapeSet[i].x += dx;
                             this.shapeSet[i].y += dy;
                         }
-                        this.shapeSet[i].draw(this.view.ctxSet);
+                        this.view.displayShapeSet(this.shapeSet[i]);
                     }
                 }
                 if (this.shapeSet !== undefined) {
@@ -250,7 +255,7 @@ export class Controller {
                 this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
                 this.shapeSet[i].fill = $('#fillSet').prop('checked');
                 this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
-                this.shapeSet[i].draw(this.view.ctxSet);
+                this.view.displayShapeSet(this.shapeSet[i]);
             }
         });
 
@@ -265,7 +270,7 @@ export class Controller {
             this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
             this.shape.stroke = $('#strokeModel').prop('checked');
             this.shape.fill = $('#fillModel').prop('checked');
-            this.shape.draw(this.view.ctxModel);
+            this.view.displayShape(this.shape);
 
         });
 
@@ -325,10 +330,10 @@ export class Controller {
         this.shape.x = x;
         this.shape.y = y;
         this.shape.r = $("#radius").val();
-        this.shape.draw(this.view.ctxModel);
+        this.view.displayShape(this.shape);
     }
     /**
-     * draw every frame (model)
+     * draft every frame (model)
      */
     updateFrameModel() {
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
@@ -340,7 +345,7 @@ export class Controller {
         this.shape.col = this.modelCol;
         this.shape.stroke = $('#strokeModel').prop('checked');
         this.shape.fill = $('#fillModel').prop('checked');
-        this.shape.draw(this.view.ctxModel);
+        this.view.displayShape(this.shape);
         if ($("#rotate").val() == 0) {
             this.isRunningModel = false;
             window.cancelAnimationFrame(() => { this.updateFrameModel(); });
@@ -353,20 +358,22 @@ export class Controller {
     }
 
     /**
-     * draw every frame, check collision of every shape
+     * draft every frame, check collision of every shape
      */
     updateFrameSet() {
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
             this.userControl(this.shapeSet[0]);
-            this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
-            this.shapeSet[i].fill = $('#fillSet').prop('checked');
-            this.shapeSet[i].draw(this.view.ctxSet);
+            this.bullet.stroke = this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
+            this.bullet.fill = this.shapeSet[i].fill = $('#fillSet').prop('checked');
+            this.view.displayShapeSet(this.shapeSet[i]);
             if (this.bullet.x < this.canvasW_Set) {
                 if (i !== 0) {
                     if (!this.bullet.hit) {
                         this.bulletCollShape(this.bullet, this.shapeSet[i]);
-                        this.bullet.draw(this.view.ctxSet);
+                        if (this.bullet.col !== undefined) {
+                            this.view.displayShapeSet(this.bullet);
+                        }
                     }
                 }
             } else {
@@ -458,7 +465,11 @@ export class Controller {
         if (this.shot) {
             if (this.bulletFreq % 20 === 0) {
                 var bullet = new Rectangle("Bullet", true);
-                bullet.col = "magenta";
+                bullet.col = {
+                    red: "255",
+                    green: "0",
+                    blue: "255"
+                };
                 bullet.w = 20;
                 bullet.h = 5;
                 bullet.x = shape.x;
