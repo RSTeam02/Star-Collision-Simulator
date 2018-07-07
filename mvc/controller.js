@@ -256,6 +256,7 @@ export class Controller {
                 this.shapeSet[i].fill = $('#fillSet').prop('checked');
                 this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
                 this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
+                this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
                 $('#fillModel').prop('checked')
                 this.view.displayShapeSet(this.shapeSet[i]);
             }
