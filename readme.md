@@ -2,7 +2,7 @@
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 + 07.07:
-    - use of experimental Path2D() to seperate vector (path) data with view, reference https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D
+    - use of experimental Path2D() to seperate vector (path) data from view, reference: https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D
     - some refactoring
     - checkbox for displaying all attributes of all objects  
 + 05.07:
