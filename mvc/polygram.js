@@ -11,6 +11,7 @@ export class Polygram extends ShapeStatus {
         super("polygram", name, bullet);
         this.s = s;
         this.bullet = bullet;
+        this.r = 0;
         this.angle = 0;
         this.rotate = 1;
         

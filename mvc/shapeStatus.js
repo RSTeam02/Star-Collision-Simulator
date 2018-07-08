@@ -12,6 +12,7 @@ export class ShapeStatus {
         this.y = 0;
         this.dx = 1;
         this.dy = 1;
+        this.col = { red: 0, green: 0, blue: 0 }
         this.name = name;
         this.hit = false;
         this.explosion = false;

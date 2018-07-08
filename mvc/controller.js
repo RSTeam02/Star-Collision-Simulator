@@ -17,11 +17,9 @@ import { Polygram } from "./polygram.js";
 export class Controller {
 
     constructor() {
-
         this.view = new View();
-        //this.view.display();
+        this.shapeSet = [];
         this.shape = new Polygram($("#vert").val(), "Polygram");
-        this.dragShape = false;
         this.startX = 0;
         this.startY = 0;
         this.modelCol = {
@@ -91,7 +89,6 @@ export class Controller {
         let polygramInfo = ["Hen", "Do", "Tri", "Tetra", "Penta", "Hexa", "Hepta", "Octa", "Nona", "Deca"];
         //random number of Polygram vertices  3 - 16
         let numberOfS = Math.floor((Math.random() * 14) + 3);
-
         let shape = new Polygram(numberOfS, "");
         let w, h;
         let direction = [-1, 1];
@@ -124,7 +121,6 @@ export class Controller {
         shape.dx = direction[Math.floor(Math.random() * 2)];
         shape.dy = direction[Math.floor(Math.random() * 2)];
         shape.r = r;
-
         return shape;
     }
 
@@ -137,16 +133,7 @@ export class Controller {
                 ? $("#info").show()
                 : $("#info").hide();
         });
-        $("#showAttr").click((e) => {
-            for (let i = 0; i < this.shapeSet.length; i++) {
-                this.shapeSet[i].showAttr = (e.currentTarget.checked) ? true : false;
-            }
-        });
-        $("#showAllAttr").click((e) => {
-            for (let i = 0; i < this.shapeSet.length; i++) {
-                this.shapeSet[i].showAllAttr = (e.currentTarget.checked) ? true : false;
-            }
-        });
+
         /**
          * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
          */
@@ -157,22 +144,20 @@ export class Controller {
             var offsetLeft = document.getElementById("simCanvas").offsetLeft;
             var mx = e.pageX - offsetLeft;
             var my = e.pageY - offsetTop;
-            if (e.type === "mousedown") {
-                this.dragShape = false;
-                for (let i = 0; i < this.shapeSet.length; i++) {
-                    if (this.cursorPointObj(mx, my, this.shapeSet[i])) {
-                        this.dragShape = true;
-                        this.shapeSet[i].drag = true;
+            if (this.shapeSet.length !== 0) {
+                if (e.type === "mousedown") {
+                    for (let i = 0; i < this.shapeSet.length; i++) {
+                        if (this.cursorPointObj(mx, my, this.shapeSet[i])) {
+                            this.shapeSet[i].drag = true;
+                        }
                     }
                 }
-            }
-            if (e.type === "mouseup") {
-                for (let i = 0; i < this.shapeSet.length; i++) {
-                    this.shapeSet[i].drag = false;
+                if (e.type === "mouseup") {
+                    for (let i = 0; i < this.shapeSet.length; i++) {
+                        this.shapeSet[i].drag = false;
+                    }
                 }
-            }
-            if (e.type === "mousemove") {
-                if (this.dragShape) {
+                if (e.type === "mousemove") {
                     this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
                     var dx = mx - this.startX;
                     var dy = my - this.startY;
@@ -183,8 +168,6 @@ export class Controller {
                         }
                         this.view.displayShapeSet(this.shapeSet[i]);
                     }
-                }
-                if (this.shapeSet !== undefined) {
                     for (let i = 0; i < this.shapeSet.length; i++) {
                         this.shapeSet[i].hover = (this.cursorPointObj(mx, my, this.shapeSet[i])) ? true : false;
                     }
@@ -204,6 +187,7 @@ export class Controller {
                 .css("font-weight", "bold")
                 .html($(event.currentTarget).text());
         });
+
         $("#simCont").on("keydown keyup", (e) => {
             e.preventDefault();
 
@@ -234,6 +218,8 @@ export class Controller {
             if (e.currentTarget.className !== "fsSim") {
                 //select number of shapes
                 $("#info").html("");
+
+                this.shapeSet = [];
                 let currentVal = parseInt($("#numb").val());
                 let maxObj = parseInt($("#numb").attr("max"));
                 let minObj = parseInt($("#numb").attr("min"));
@@ -243,64 +229,51 @@ export class Controller {
                 } else {
                     numOfObj = (currentVal < 1) ? minObj : currentVal;
                 }
-                this.shapeSet = new Array(numOfObj);
                 //generate random shapes
-                $("#numb").val(this.shapeSet.length)
+                $("#numb").val(numOfObj)
                 for (let i = 0; i < numOfObj; i++) {
                     this.shapeSet[i] = this.rndShape();
                 }
             }
             this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
             for (let i = 0; i < this.shapeSet.length; i++) {
+                this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
+                this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
                 this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
-                this.shapeSet[i].fill = $('#fillSet').prop('checked');
-                this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
                 this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
+                this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
+                this.shapeSet[i].fill = $('#fillSet').prop('checked');
                 this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
                 $('#fillModel').prop('checked')
                 this.view.displayShapeSet(this.shapeSet[i]);
             }
         });
 
-        $("#rotate, #radius, #vert, .colClass").on("click input", (e) => {
+        $("#rotate, #radius, #vert, .colClass,.fsVisu").on("click input", (e) => {
             if (e.currentTarget.id == "vert") {
                 this.shape.angle = 0;
             }
             this.previewShape();
         });
 
-        $(".fsVisu").on("click", () => {
-            this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
-            this.shape.stroke = $('#strokeModel').prop('checked');
-            this.shape.fill = $('#fillModel').prop('checked');
-            this.view.displayShape(this.shape);
-
-        });
-
         /**
          * start/pause random movements with collision detection, select speed with slider
          */
         $("#startPause").on("click", () => {
-            if (this.shapeSet !== undefined) {
+            if (this.shapeSet.length !== 0) {
                 this.isRunning = (this.isRunning) ? false : true;
                 this.updateFrameSet();
             }
         });
+
         $("#rotate").on("input", () => {
-            if (this.shape !== undefined) {
-                if (!this.isRunningModel) {
-                    this.updateFrameModel();
-                    this.isRunningModel = true;
-                }
+            if (!this.isRunningModel) {
+                this.updateFrameModel();
+                this.isRunningModel = true;
             }
         });
 
-        $("#speed").on("input", () => {
-            for (let i in this.shapeSet) {
-                this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
-                this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
-            }
-        });
+
     }
 
     cursorPointObj(mx, my, shape) {
@@ -340,14 +313,7 @@ export class Controller {
      */
     updateFrameModel() {
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
-        this.modelCol = {
-            red: $("#red").val(),
-            green: $("#green").val(),
-            blue: $("#blue").val()
-        }
         this.shape.col = this.modelCol;
-        this.shape.stroke = $('#strokeModel').prop('checked');
-        this.shape.fill = $('#fillModel').prop('checked');
         this.view.displayShape(this.shape);
         if ($("#rotate").val() == 0) {
             this.isRunningModel = false;
@@ -367,16 +333,12 @@ export class Controller {
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
             this.userControl(this.shapeSet[0]);
-            this.bullet.stroke = this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
-            this.bullet.fill = this.shapeSet[i].fill = $('#fillSet').prop('checked');
             this.view.displayShapeSet(this.shapeSet[i]);
             if (this.bullet.x < this.canvasW_Set) {
                 if (i !== 0) {
                     if (!this.bullet.hit) {
                         this.bulletCollShape(this.bullet, this.shapeSet[i]);
-                        if (this.bullet.col !== undefined) {
-                            this.view.displayShapeSet(this.bullet);
-                        }
+                        this.view.displayShapeSet(this.bullet);
                     }
                 }
             } else {
@@ -434,7 +396,7 @@ export class Controller {
                 if (index >= 0) {
                     this.shapeSet.splice(index, 1);
                 }
-            }, 1000);
+            }, 1500);
             bullet.hit = true;
         } else {
             this.nextBullet = false;
@@ -467,18 +429,8 @@ export class Controller {
         }
         if (this.shot) {
             if (this.bulletFreq % 20 === 0) {
-                var bullet = new Rectangle("Bullet", true);
-                bullet.col = {
-                    red: "255",
-                    green: "0",
-                    blue: "255"
-                };
-                bullet.w = 20;
-                bullet.h = 5;
-                bullet.x = shape.x;
-                bullet.y = shape.y;
                 if (this.nextBullet) {
-                    this.bullet = bullet;
+                    this.newBullet(shape);
                 }
             }
             if (!$('#autofire').prop('checked')) {
@@ -486,6 +438,21 @@ export class Controller {
             }
             this.bulletFreq++;
         }
+    }
+
+    newBullet(shape) {
+        this.bullet = new Rectangle("Bullet", true);
+        this.bullet.col = {
+            red: 255,
+            green: 0,
+            blue: 255
+        };
+        this.bullet.w = 20;
+        this.bullet.h = 5;
+        this.bullet.x = shape.x;
+        this.bullet.y = shape.y;
+        this.bullet.stroke = $('#strokeSet').prop('checked');
+        this.bullet.fill = $('#fillSet').prop('checked');
     }
     /**
      * 
@@ -495,9 +462,8 @@ export class Controller {
      */
     bounceShape(shape) {
         var cdiffX = 0;
-        if (typeof shape.r !== "undefined") {
-            cdiffX = shape.w = shape.h = shape.r;
-        }
+        cdiffX = shape.w = shape.h = shape.r;
+
         if (shape.x + shape.dx > this.canvasW_Set - shape.w || -cdiffX + shape.x + shape.dx < 0) {
             shape.dx = -shape.dx;
             shape.rotateDir();
