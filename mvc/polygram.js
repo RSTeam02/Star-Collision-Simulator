@@ -7,10 +7,9 @@ import { ShapeStatus } from "./shapeStatus.js";
  */
 export class Polygram extends ShapeStatus {
 
-    constructor(s, name = "", bullet = false) {
-        super("polygram", name, bullet);
-        this.s = s;
-        this.bullet = bullet;
+    constructor() {
+        super("polygram");
+        this.s = 0;        
         this.r = 0;
         this.angle = 0;
         this.rotate = 1;

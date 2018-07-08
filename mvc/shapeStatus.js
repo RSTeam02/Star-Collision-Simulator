@@ -7,14 +7,14 @@
 
 export class ShapeStatus {
 
-    constructor(shapeInfo, name, bullet) {
+    constructor(shapeInfo) {
         this.x = 0;
         this.y = 0;
         this.dx = 1;
         this.dy = 1;
         this.col = { red: 0, green: 0, blue: 0 }
         this.name = name;
-        this.hit = false;
+        this.hit = true;
         this.explosion = false;
         this.explosionEffect = false;
         this.shapeInfo = shapeInfo;
@@ -22,7 +22,7 @@ export class ShapeStatus {
         this.showAllAttr = false;
         this.drag = false;
         this.hover = false;
-        this.bullet = bullet;
+        this.bullet = false;
         this.rotate = 1;
         this.stroke = false;
         this.fill = false;
@@ -39,7 +39,7 @@ export class ShapeStatus {
             this.x += this.dx;
             this.y += this.dy;
         } else {
-            this.x += this.dx * 100;
+            this.x += this.dx *5;
         }
     }
 

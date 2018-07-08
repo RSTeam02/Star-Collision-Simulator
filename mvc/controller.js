@@ -19,25 +19,22 @@ export class Controller {
     constructor() {
         this.view = new View();
         this.shapeSet = [];
-        this.shape = new Polygram($("#vert").val(), "Polygram");
-        this.startX = 0;
-        this.startY = 0;
-        this.modelCol = {
+        this.shape = new Polygram();
+        this.shape.col = {
             red: $("#red").val(Math.random() * 256),
             green: $("#green").val(Math.random() * 256),
             blue: $("#blue").val(Math.random() * 256)
         }
-        $("#redInfo").html(`${$("#red").val()}`);
-        $("#greenInfo").html(`${$("#green").val()}`);
-        $("#blueInfo").html(`${$("#blue").val()}`);
-        $("#radiusInfo").html(`${$("#radius").val()}`);
+        this.nextBullet = true;
+        this.startX = 0;
+        this.startY = 0;
         this.showHideHl();
         this.canvasW_Set = $("#simCanvas").attr("width");
         this.canvasH_Set = $("#simCanvas").attr("height");
         this.canvasW_Model = $("#visuCanvas").attr("width");
         this.canvasH_Model = $("#visuCanvas").attr("height");
+        this.mouseListener();
         this.keyListener();
-        this.previewShape();
         this.isRunning = true;
         this.isRunningModel = false;
         this.left = false;
@@ -46,8 +43,8 @@ export class Controller {
         this.down = false;
         this.bulletNo = 0;
         this.bulletFreq = 0;
-        this.bullet = new Rectangle("Bullet", true);
-        this.nextBullet = true;
+        this.bullet = new Rectangle();
+        this.visualizeShape();
 
     }
     /**
@@ -79,18 +76,12 @@ export class Controller {
         let minY = 30;
         let maxX = this.canvasW_Set - 50;
         let maxY = this.canvasH_Set - 50;
-        let minW = 30;
-        let minH = 30;
-        let maxW = 60;
-        let maxH = 60;
         let minR = 15;
         let maxR = 30;
-
         let polygramInfo = ["Hen", "Do", "Tri", "Tetra", "Penta", "Hexa", "Hepta", "Octa", "Nona", "Deca"];
         //random number of Polygram vertices  3 - 16
         let numberOfS = Math.floor((Math.random() * 14) + 3);
-        let shape = new Polygram(numberOfS, "");
-        let w, h;
+        let shape = new Polygram();
         let direction = [-1, 1];
         let shapeCol = {
             red: Math.floor(Math.random() * 256),
@@ -99,10 +90,7 @@ export class Controller {
         }
         let x = Math.floor(Math.random() * (maxX - minX) + minX);
         let y = Math.floor(Math.random() * (maxY - minY) + minY);
-        w = h = Math.floor(Math.random() * (maxW - minW) + minW);
         let r = Math.floor(Math.random() * (maxR - minR) + minR);
-
-
         if (numberOfS == 3) {
             shape.name = "Triangle";
         }
@@ -118,22 +106,16 @@ export class Controller {
         shape.col = shapeCol;
         shape.x = x;
         shape.y = y;
+        shape.bullet = false;
         shape.dx = direction[Math.floor(Math.random() * 2)];
         shape.dy = direction[Math.floor(Math.random() * 2)];
         shape.r = r;
+        shape.s = numberOfS;
         return shape;
     }
 
-    /**
-     * used keycodes (arrow keys, ctrl)
-     */
-    keyListener() {
-        $("#colllog").click(function () {
-            (this.checked)
-                ? $("#info").show()
-                : $("#info").hide();
-        });
 
+    mouseListener() {
         /**
          * tutorial reference: https://stackoverflow.com/questions/24926028/drag-and-drop-multiple-objects-in-html5-canvas
          */
@@ -176,6 +158,17 @@ export class Controller {
             this.startX = mx;
             this.startY = my;
         });
+    }
+
+    /**
+     * used keycodes (arrow keys, ctrl)
+     */
+    keyListener() {
+        $("#colllog").click(function () {
+            (this.checked) ? $("#info").show() : $("#info").hide();
+        });
+
+
 
         $('.link').hover((event) => {
             $(event.currentTarget).html(`<b>${$(event.currentTarget).text()}</b>`);
@@ -215,10 +208,9 @@ export class Controller {
          * select number and generate polygrams with random parameters
          */
         $("#generate, .fsSim").on("click", (e) => {
-            if (e.currentTarget.className !== "fsSim") {
-                //select number of shapes
+            //select number of shapes
+            if (e.currentTarget.id === "generate") {
                 $("#info").html("");
-
                 this.shapeSet = [];
                 let currentVal = parseInt($("#numb").val());
                 let maxObj = parseInt($("#numb").attr("max"));
@@ -235,25 +227,14 @@ export class Controller {
                     this.shapeSet[i] = this.rndShape();
                 }
             }
-            this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
-            for (let i = 0; i < this.shapeSet.length; i++) {
-                this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
-                this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
-                this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
-                this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
-                this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
-                this.shapeSet[i].fill = $('#fillSet').prop('checked');
-                this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
-                $('#fillModel').prop('checked')
-                this.view.displayShapeSet(this.shapeSet[i]);
-            }
+            this.shapeSetAttr();
         });
 
         $("#rotate, #radius, #vert, .colClass,.fsVisu").on("click input", (e) => {
             if (e.currentTarget.id == "vert") {
                 this.shape.angle = 0;
             }
-            this.previewShape();
+            this.visualizeShape();
         });
 
         /**
@@ -272,8 +253,20 @@ export class Controller {
                 this.isRunningModel = true;
             }
         });
+    }
 
-
+    shapeSetAttr() {
+        this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
+        for (let i = 0; i < this.shapeSet.length; i++) {
+            this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
+            this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
+            this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
+            this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
+            this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
+            this.shapeSet[i].fill = $('#fillSet').prop('checked');
+            this.shapeSet[i].explosionEffect = $('#explosion').prop('checked');
+            this.view.displayShapeSet(this.shapeSet[i]);
+        }
     }
 
     cursorPointObj(mx, my, shape) {
@@ -283,16 +276,16 @@ export class Controller {
             my > shape.y - shape.r) ? true : false;
     }
 
-    previewShape() {
+    visualizeShape() {
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
         this.shape.s = $("#vert").val();
+        this.shape.r = $("#radius").val();
+        this.shape.bullet = false;
         this.shape.stroke = $('#strokeModel').prop('checked');
         this.shape.fill = $('#fillModel').prop('checked');
         let w, h;
         let direction = [-1, 1];
-        let x = this.canvasW_Model / 2;
-        let y = this.canvasH_Model / 2;
-        this.modelCol = {
+        this.shape.col = {
             red: $("#red").val(),
             green: $("#green").val(),
             blue: $("#blue").val()
@@ -302,10 +295,8 @@ export class Controller {
         $("#blueInfo").html(`${$("#blue").val()}`);
         $("#radiusInfo").html(`${$("#radius").val()}`);
         $("#rotateInfo").html(`${$("#rotate").val()}`);
-        this.shape.col = this.modelCol;
-        this.shape.x = x;
-        this.shape.y = y;
-        this.shape.r = $("#radius").val();
+        this.shape.x = this.canvasW_Model / 2;
+        this.shape.y = this.canvasH_Model / 2;
         this.view.displayShape(this.shape);
     }
     /**
@@ -313,7 +304,11 @@ export class Controller {
      */
     updateFrameModel() {
         this.view.ctxModel.clearRect(0, 0, this.canvasW_Model, this.canvasH_Model);
-        this.shape.col = this.modelCol;
+        this.shape.col = {
+            red: $("#red").val(),
+            green: $("#green").val(),
+            blue: $("#blue").val()
+        }
         this.view.displayShape(this.shape);
         if ($("#rotate").val() == 0) {
             this.isRunningModel = false;
@@ -337,6 +332,7 @@ export class Controller {
             if (this.bullet.x < this.canvasW_Set) {
                 if (i !== 0) {
                     if (!this.bullet.hit) {
+                        this.bullet.moveShape();
                         this.bulletCollShape(this.bullet, this.shapeSet[i]);
                         this.view.displayShapeSet(this.bullet);
                     }
@@ -363,13 +359,9 @@ export class Controller {
             }
         }
         $('div pre:gt(9)').remove();
-        if (this.bullet.x < this.canvasW_Set) {
-            this.bullet.moveShape();
-        }
         (!this.isRunning)
             ? window.requestAnimationFrame(this.updateFrameSet.bind(this))
             : window.cancelAnimationFrame(() => { this.updateFrameSet(); });
-
     }
 
     shapeCollShape(shape1, shape2) {
@@ -428,7 +420,8 @@ export class Controller {
             }
         }
         if (this.shot) {
-            if (this.bulletFreq % 20 === 0) {
+            this.bullet.hit = false;
+            if (this.bulletFreq % 10 === 0) {
                 if (this.nextBullet) {
                     this.newBullet(shape);
                 }
@@ -441,12 +434,14 @@ export class Controller {
     }
 
     newBullet(shape) {
-        this.bullet = new Rectangle("Bullet", true);
+        this.bullet = new Rectangle();
         this.bullet.col = {
             red: 255,
             green: 0,
             blue: 255
         };
+        this.bullet.name = "Bullet";
+        this.bullet.bullet = true;
         this.bullet.w = 20;
         this.bullet.h = 5;
         this.bullet.x = shape.x;
