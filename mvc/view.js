@@ -20,6 +20,7 @@ export class View {
             let text = (model.name !== "Triangle" && model.name !== "Square") ? `${model.s}-pointed star (${model.name})` : `${model.name}`
             this.ctxSet.fillText(text, model.x + model.r, model.y);
             this.ctxSet.fillText(`position(x/y): ${model.x}/${model.y}`, model.x + model.r, model.y + 12);
+            this.ctxSet.fillText(`dragSpeed: ${model.dragSpeed} pixel/s`, model.x + model.r, model.y + 24);
         }
         if (model.explosion) {
             if (model.explosionEffect) {

@@ -25,7 +25,9 @@ export class Controller {
             green: $("#green").val(Math.random() * 256),
             blue: $("#blue").val(Math.random() * 256)
         }
+        this.time = 0;
         this.nextBullet = true;
+        this.lastTime = 0;
         this.startX = 0;
         this.startY = 0;
         this.showHideHl();
@@ -122,10 +124,17 @@ export class Controller {
         $("#simCanvas").on("mousedown mouseup mousemove", (e) => {
             e.preventDefault();
             e.stopPropagation();
+            let currentTime = new Date().getTime();
             var offsetTop = document.getElementById("simCanvas").offsetTop;
             var offsetLeft = document.getElementById("simCanvas").offsetLeft;
             var mx = e.pageX - offsetLeft;
             var my = e.pageY - offsetTop;
+            let current = { x: mx, y: my, time: currentTime };
+            let last = { x: this.startX, y: this.startY, time: this.time };
+            this.currentSpeed = this.mouseMoveSpeed(current, last);
+            for (let i = 0; i < this.shapeSet.length; i++) {
+                this.shapeSet[i].dragSpeed = 0;
+            }
             if (this.shapeSet.length !== 0) {
                 if (e.type === "mousedown") {
                     for (let i = 0; i < this.shapeSet.length; i++) {
@@ -147,6 +156,7 @@ export class Controller {
                         if (this.shapeSet[i].drag) {
                             this.shapeSet[i].x += dx;
                             this.shapeSet[i].y += dy;
+                            this.shapeSet[i].dragSpeed = this.currentSpeed;
                         }
                         this.view.displayShapeSet(this.shapeSet[i]);
                     }
@@ -154,9 +164,11 @@ export class Controller {
                         this.shapeSet[i].hover = (this.cursorPointObj(mx, my, this.shapeSet[i])) ? true : false;
                     }
                 }
+
             }
             this.startX = mx;
             this.startY = my;
+            this.time = currentTime;
         });
     }
 
@@ -167,9 +179,6 @@ export class Controller {
         $("#colllog").click(function () {
             (this.checked) ? $("#info").show() : $("#info").hide();
         });
-
-
-
         $('.link').hover((event) => {
             $(event.currentTarget).html(`<b>${$(event.currentTarget).text()}</b>`);
         }, (event) => {
@@ -253,6 +262,13 @@ export class Controller {
                 this.isRunningModel = true;
             }
         });
+    }
+
+    mouseMoveSpeed(current, last) {
+        let distance = Math.sqrt(Math.pow((current.x - last.x), 2) + Math.pow((current.y - last.y), 2));
+        let time = current.time - last.time;
+        let moveSpeed = (distance / time * 1000);
+        return Math.floor(moveSpeed);
     }
 
     shapeSetAttr() {

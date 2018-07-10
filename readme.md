@@ -1,6 +1,10 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 10.07: 
+    - determine speed of dragged object (pixel per sec), reference: https://stackoverflow.com/questions/45519597/get-mouse-moving-speed
+        - calculate absolute difference of current time-last time (measured time) and current position-last position (distance between two points in 2D) 
+        - calculate speed = 1000 * distance/time (in seconds)
 + 07.07:
     - use of experimental Path2D() to seperate vector (path) data from view, reference: https://developer.mozilla.org/en-US/docs/Web/API/Path2D/Path2D
     - some refactoring (08.07)
