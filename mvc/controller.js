@@ -25,6 +25,7 @@ export class Controller {
             green: $("#green").val(Math.random() * 256),
             blue: $("#blue").val(Math.random() * 256)
         }
+        this.to;
         this.time = 0;
         this.nextBullet = true;
         this.lastTime = 0;
@@ -124,6 +125,7 @@ export class Controller {
         $("#simCanvas").on("mousedown mouseup mousemove", (e) => {
             e.preventDefault();
             e.stopPropagation();
+
             let currentTime = new Date().getTime();
             var offsetTop = document.getElementById("simCanvas").offsetTop;
             var offsetLeft = document.getElementById("simCanvas").offsetLeft;
@@ -132,9 +134,7 @@ export class Controller {
             let current = { x: mx, y: my, time: currentTime };
             let last = { x: this.startX, y: this.startY, time: this.time };
             this.currentSpeed = this.mouseMoveSpeed(current, last);
-            for (let i = 0; i < this.shapeSet.length; i++) {
-                this.shapeSet[i].dragSpeed = 0;
-            }
+
             if (this.shapeSet.length !== 0) {
                 if (e.type === "mousedown") {
                     for (let i = 0; i < this.shapeSet.length; i++) {
@@ -157,14 +157,26 @@ export class Controller {
                             this.shapeSet[i].x += dx;
                             this.shapeSet[i].y += dy;
                             this.shapeSet[i].dragSpeed = this.currentSpeed;
+                            if (this.currentSpeed > this.shapeSet[i].maxDragSpeed) {
+                                this.shapeSet[i].maxDragSpeed = this.currentSpeed;
+                            }
                         }
                         this.view.displayShapeSet(this.shapeSet[i]);
                     }
                     for (let i = 0; i < this.shapeSet.length; i++) {
                         this.shapeSet[i].hover = (this.cursorPointObj(mx, my, this.shapeSet[i])) ? true : false;
                     }
-                }
+                    //when mouse has stopped set dragspeed to 0: https://stackoverflow.com/questions/609965/detecting-when-the-mouse-is-not-moving
+                    clearTimeout(this.to);
+                    this.to = setTimeout(() => {
+                        this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
+                        for (let i = 0; i < this.shapeSet.length; i++) {
+                            this.shapeSet[i].dragSpeed = 0;
+                            this.view.displayShapeSet(this.shapeSet[i]);
+                        }
+                    }, 5);
 
+                }
             }
             this.startX = mx;
             this.startY = my;
@@ -385,6 +397,20 @@ export class Controller {
             shape1.rotateDir();
             shape2.rotateDir();
             $("#info").prepend(`<pre>${shape1.name} collided with ${shape2.name}</pre>`);
+            if (shape1.dragSpeed > 2000 || shape2.dragSpeed > 2000) {
+                shape1.explosion = true;
+                shape2.explosion = true;
+                setTimeout(() => {
+                    var index = this.shapeSet.indexOf(shape1);
+                    var index2 = this.shapeSet.indexOf(shape2);
+                    if (index >= 0) {
+                        this.shapeSet.splice(index, 1);
+                        this.shapeSet.splice(index2, 1);
+                    }
+                }, 1500);
+            }
+            shape1.dragSpeed = 0;
+            shape2.dragSpeed = 0;
         }
     }
 

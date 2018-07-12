@@ -21,6 +21,7 @@ export class View {
             this.ctxSet.fillText(text, model.x + model.r, model.y);
             this.ctxSet.fillText(`position(x/y): ${model.x}/${model.y}`, model.x + model.r, model.y + 12);
             this.ctxSet.fillText(`dragSpeed: ${model.dragSpeed} pixel/s`, model.x + model.r, model.y + 24);
+            this.ctxSet.fillText(`maxDragSpeed: ${model.maxDragSpeed} pixel/s`, model.x + model.r, model.y + 36);
         }
         if (model.explosion) {
             if (model.explosionEffect) {

@@ -22,6 +22,7 @@ export class ShapeStatus {
         this.showAllAttr = false;
         this.drag = false;
         this.dragSpeed = 0;
+        this.maxDragSpeed = 0;
         this.hover = false;
         this.bullet = false;
         this.rotate = 1;

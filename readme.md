@@ -1,6 +1,10 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 12.07:
+    - set dragspeed to 0 if mouse has stopped moving 
+    - determine maximum reached dragSpeed of each object
+
 + 10.07: 
     - determine speed of dragged object (pixel per sec), reference: https://stackoverflow.com/questions/45519597/get-mouse-moving-speed
         - calculate absolute difference of current time-last time (measured time) and current position-last position (distance between two points in 2D) 
