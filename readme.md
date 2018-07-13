@@ -1,6 +1,8 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
++ 13.07:
+    - determine for each object the distance in pixel
 + 12.07:
     - set dragspeed to 0 if mouse has stopped moving 
     - determine maximum reached dragSpeed of each object

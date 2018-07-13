@@ -10,8 +10,8 @@ export class ShapeStatus {
     constructor(shapeInfo) {
         this.x = 0;
         this.y = 0;
-        this.dx = 1;
-        this.dy = 1;
+        this.dx = 0;
+        this.dy = 0;
         this.col = { red: 0, green: 0, blue: 0 }
         this.name = name;
         this.hit = true;
@@ -28,6 +28,7 @@ export class ShapeStatus {
         this.rotate = 1;
         this.stroke = false;
         this.fill = false;
+        this.distance = 0;
     }
 
     visualNoise() {
@@ -37,12 +38,8 @@ export class ShapeStatus {
     }
 
     moveShape() {
-        if (!this.bullet) {
-            this.x += this.dx;
-            this.y += this.dy;
-        } else {
-            this.x += this.dx *5;
-        }
+        this.x += this.dx;
+        this.y += this.dy;
     }
 
     rotateDir() {

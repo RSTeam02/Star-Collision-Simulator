@@ -48,7 +48,6 @@ export class Controller {
         this.bulletFreq = 0;
         this.bullet = new Rectangle();
         this.visualizeShape();
-
     }
     /**
      * 
@@ -133,7 +132,8 @@ export class Controller {
             var my = e.pageY - offsetTop;
             let current = { x: mx, y: my, time: currentTime };
             let last = { x: this.startX, y: this.startY, time: this.time };
-            this.currentSpeed = this.mouseMoveSpeed(current, last);
+            this.currentSpeed = this.mouseMoveSpeed(current, last)
+
 
             if (this.shapeSet.length !== 0) {
                 if (e.type === "mousedown") {
@@ -156,6 +156,7 @@ export class Controller {
                         if (this.shapeSet[i].drag) {
                             this.shapeSet[i].x += dx;
                             this.shapeSet[i].y += dy;
+                            this.shapeSet[i].distance += this.objDistance(current, last);
                             this.shapeSet[i].dragSpeed = this.currentSpeed;
                             if (this.currentSpeed > this.shapeSet[i].maxDragSpeed) {
                                 this.shapeSet[i].maxDragSpeed = this.currentSpeed;
@@ -181,6 +182,7 @@ export class Controller {
             this.startX = mx;
             this.startY = my;
             this.time = currentTime;
+
         });
     }
 
@@ -277,17 +279,21 @@ export class Controller {
     }
 
     mouseMoveSpeed(current, last) {
-        let distance = Math.sqrt(Math.pow((current.x - last.x), 2) + Math.pow((current.y - last.y), 2));
+        let distance = this.objDistance(current, last);
         let time = current.time - last.time;
         let moveSpeed = (distance / time * 1000);
         return Math.floor(moveSpeed);
     }
 
+    objDistance(current, last) {
+        let distance = Math.sqrt(Math.pow((current.x - last.x), 2) + Math.pow((current.y - last.y), 2));
+        return distance;
+    }
+
     shapeSetAttr() {
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
-            this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
-            this.shapeSet[i].dy = (this.shapeSet[i].dy < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
+            this.shapeSet[i].dy = this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
             this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
             this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
             this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
@@ -380,6 +386,8 @@ export class Controller {
                 this.bounceShape(this.shapeSet[i]);
                 if (!this.shapeSet[i].drag) {
                     this.shapeSet[i].moveShape();
+                    let speedVal = Math.pow(parseInt($("#speed").val()), 2);
+                    this.shapeSet[i].distance += Math.floor(Math.sqrt(2 * speedVal));
                 }
             }
             if (this.shapeSet[i].s > 2) {
@@ -397,23 +405,10 @@ export class Controller {
             shape1.rotateDir();
             shape2.rotateDir();
             $("#info").prepend(`<pre>${shape1.name} collided with ${shape2.name}</pre>`);
-            if (shape1.dragSpeed > 2000 || shape2.dragSpeed > 2000) {
-                shape1.explosion = true;
-                shape2.explosion = true;
-                setTimeout(() => {
-                    var index = this.shapeSet.indexOf(shape1);
-                    var index2 = this.shapeSet.indexOf(shape2);
-                    if (index >= 0) {
-                        this.shapeSet.splice(index, 1);
-                        this.shapeSet.splice(index2, 1);
-                    }
-                }, 1500);
-            }
-            shape1.dragSpeed = 0;
-            shape2.dragSpeed = 0;
+
+
         }
     }
-
     /**
      * 
      * @param {*} bullet 
@@ -461,6 +456,14 @@ export class Controller {
                 shape.y += 1;
             }
         }
+        if (this.down || this.up || this.left || this.right
+            || this.down && this.left
+            || this.down && this.right
+            || this.up && this.left
+            || this.up && this.right) {
+            shape.distance += 1;
+        }
+
         if (this.shot) {
             this.bullet.hit = false;
             if (this.bulletFreq % 10 === 0) {
@@ -473,10 +476,12 @@ export class Controller {
             }
             this.bulletFreq++;
         }
+
     }
 
-    newBullet(shape) {
+    newBullet(shape) {        
         this.bullet = new Rectangle();
+        this.bullet.dx = 5;
         this.bullet.col = {
             red: 255,
             green: 0,
