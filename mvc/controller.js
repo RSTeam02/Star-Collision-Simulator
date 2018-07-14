@@ -259,7 +259,7 @@ export class Controller {
             this.shapeSetAttr();
         });
 
-        $("#rndSpeed, #speed").on("input", (e) => {
+        $("#rndSpeed, #speed").on("input click", (e) => {
             let direction = [-1, 1];
             $("#speedLegend").html(`(Random) Speed Range between 1 to ${$("#speed").val()}`);
             for (let i = 0; i < this.shapeSet.length; i++) {
