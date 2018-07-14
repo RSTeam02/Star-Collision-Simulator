@@ -1,6 +1,9 @@
 # Star-Collision Simulator
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
+
++ 14.07:
+    - if canvas bound is reached => stop counting distance, distinguish between diagonal and non-diagonal controls (keyboard control with arrows)  
 + 13.07:
     - determine for each object the distance in pixel
 + 12.07:

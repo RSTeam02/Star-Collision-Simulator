@@ -25,6 +25,7 @@ export class Controller {
             green: $("#green").val(Math.random() * 256),
             blue: $("#blue").val(Math.random() * 256)
         }
+        this.diagonal = false;
         this.to;
         this.time = 0;
         this.nextBullet = true;
@@ -223,8 +224,8 @@ export class Controller {
             if (e.keyCode == 17) {
                 this.shot = pushed;
                 if (e.type === "keyup") { this.bulletFreq = 0; };
-
             }
+            if (!pushed) { this.diagonal = false };
             e.target.focus({ preventScroll: false });
         });
         /**
@@ -359,9 +360,9 @@ export class Controller {
      * draft every frame, check collision of every shape
      */
     updateFrameSet() {
+        this.userControl(this.shapeSet[0]);
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
-            this.userControl(this.shapeSet[0]);
             this.view.displayShapeSet(this.shapeSet[i]);
             if (this.bullet.x < this.canvasW_Set) {
                 if (i !== 0) {
@@ -382,8 +383,8 @@ export class Controller {
             if (this.shapeSet[i].explosion) {
                 this.shapeSet[i].dy = this.shapeSet[i].dx = 0;
             }
+            this.bounceShape(this.shapeSet[i]);
             if (i !== 0) {
-                this.bounceShape(this.shapeSet[i]);
                 if (!this.shapeSet[i].drag) {
                     this.shapeSet[i].moveShape();
                     let speedVal = Math.pow(parseInt($("#speed").val()), 2);
@@ -436,32 +437,46 @@ export class Controller {
      * assign controls to a random shape object with index0 
      */
     userControl(shape) {
+        var cdiffX = 0;
+        cdiffX = shape.w = shape.h = shape.r;
+
         if (this.left) {
             if (shape.x - shape.r > 0) {
-                shape.x -= 1;
+                shape.x -= 2;
+                if (this.up || this.down) {
+                    shape.distance += Math.sqrt(Math.pow(2, 2) + Math.pow(2, 2));
+                    this.diagonal = true;
+                } else {
+                    shape.distance += 2;
+                }
             }
         }
         if (this.right) {
             if (shape.x + shape.r < this.canvasW_Set) {
-                shape.x += 1;
+                shape.x += 2;
+                if (this.up || this.down) {
+                    shape.distance += Math.sqrt(Math.pow(2, 2) + Math.pow(2, 2));
+                    this.diagonal = true;
+                } else {
+                    shape.distance += 2;
+                }
             }
         }
         if (this.up) {
             if (shape.y - shape.r > 0) {
-                shape.y -= 1;
+                shape.y -= 2;
+                if (!this.diagonal) {
+                    shape.distance += 2;
+                }
             }
         }
         if (this.down) {
             if (shape.y + shape.r < this.canvasH_Set) {
-                shape.y += 1;
+                shape.y += 2;
+                if (!this.diagonal) {
+                    shape.distance += 2;
+                }
             }
-        }
-        if (this.down || this.up || this.left || this.right
-            || this.down && this.left
-            || this.down && this.right
-            || this.up && this.left
-            || this.up && this.right) {
-            shape.distance += 1;
         }
 
         if (this.shot) {
@@ -476,10 +491,9 @@ export class Controller {
             }
             this.bulletFreq++;
         }
-
     }
 
-    newBullet(shape) {        
+    newBullet(shape) {
         this.bullet = new Rectangle();
         this.bullet.dx = 5;
         this.bullet.col = {
@@ -505,7 +519,6 @@ export class Controller {
     bounceShape(shape) {
         var cdiffX = 0;
         cdiffX = shape.w = shape.h = shape.r;
-
         if (shape.x + shape.dx > this.canvasW_Set - shape.w || -cdiffX + shape.x + shape.dx < 0) {
             shape.dx = -shape.dx;
             shape.rotateDir();
