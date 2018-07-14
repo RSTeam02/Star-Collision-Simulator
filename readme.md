@@ -3,6 +3,7 @@
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 
 + 14.07:
+    - check random checkbox to assign random speed for each object, if not checked, every obj gets equal speed chosen by range slider   
     - if canvas bound is reached => stop counting distance, distinguish between diagonal and non-diagonal controls (keyboard control with arrows)  
 + 13.07:
     - determine for each object the distance in pixel

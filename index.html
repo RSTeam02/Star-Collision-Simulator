@@ -9,7 +9,7 @@
             border: 1px solid #d3d3d3;
             background-color: #f1f1f1;
         }
-        
+
         th,
         td {
             font-size: 3em;
@@ -44,12 +44,12 @@
             padding: 5px 5%;
             text-align: center;
         }
-        
-        #info{
-            right:0;
+
+        #info {
+            right: 0;
             top: 0;
-            position: fixed;  
-            list-style-type: none; 
+            position: fixed;
+            list-style-type: none;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -74,22 +74,27 @@
             Number of vertices:
             <input type="number" id="vert" value="3" min="3" max="100">
             <br> Red:
-            <input class="colClass" type="range" min="0" max="255" value="0" id="red"><span id="redInfo"></span>
+            <input class="colClass" type="range" min="0" max="255" value="0" id="red">
+            <span id="redInfo"></span>
             <br> Green:
-            <input class="colClass" type="range" min="0" max="255" value="0" id="green"><span id="greenInfo"></span>
+            <input class="colClass" type="range" min="0" max="255" value="0" id="green">
+            <span id="greenInfo"></span>
             <br> Blue:
-            <input class="colClass" type="range" min="0" max="255" value="0" id="blue"><span id="blueInfo"></span>
-            
+            <input class="colClass" type="range" min="0" max="255" value="0" id="blue">
+            <span id="blueInfo"></span>
+
             <br>Radius:
-            <input type="range" min="10" max="1000" value="200" id="radius"><span id="radiusInfo"></span>
+            <input type="range" min="10" max="1000" value="200" id="radius">
+            <span id="radiusInfo"></span>
             <br>Rotation:
-            <input type="range" value="0" min="-10" max="10" id="rotate" step = "1"><span id="rotateInfo"></span>
-            <br>                   
+            <input type="range" value="0" min="-10" max="10" id="rotate" step="1">
+            <span id="rotateInfo"></span>
+            <br>
             <input type="checkbox" id="strokeModel" class="fsVisu" checked />stroke
             <br>
             <input type="checkbox" id="fillModel" class="fsVisu" checked />fill
             <br>
-            
+
 
 
         </form>
@@ -112,11 +117,14 @@
             <br>
             <input type="checkbox" id="showAttr" class="fsSim" checked />hover shape info
             <br>
-            <input type="checkbox" id="showAllAttr" class="fsSim"/>all shape info
+            <input type="checkbox" id="showAllAttr" class="fsSim" />all shape info
             <br>
-            <input type="checkbox" id="colllog" checked />collision log
-            <br>slow
-            <input type="range" id="speed" value="1" min="1" max="10" id="startPause" class="fsSim" />fast
+            <input type="checkbox" id="colllog" checked />collision log           
+            <fieldset>
+                <legend id="speedLegend"></legend>               
+                1<input type="range" id="speed" value="5" min="1" max="10" class="fsSim" />10 <input type="checkbox" id="rndSpeed" checked />random
+            </fieldset>
+
         </form>
         <div id="info"></div>
     </div>

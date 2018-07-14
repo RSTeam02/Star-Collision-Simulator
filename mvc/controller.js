@@ -25,6 +25,7 @@ export class Controller {
             green: $("#green").val(Math.random() * 256),
             blue: $("#blue").val(Math.random() * 256)
         }
+        $("#speedLegend").html(`(Random) Speed Range between 1 to ${$("#speed").val()}`);
         this.diagonal = false;
         this.to;
         this.time = 0;
@@ -81,6 +82,7 @@ export class Controller {
         let maxY = this.canvasH_Set - 50;
         let minR = 15;
         let maxR = 30;
+        let rndSpeed = 1;
         let polygramInfo = ["Hen", "Do", "Tri", "Tetra", "Penta", "Hexa", "Hepta", "Octa", "Nona", "Deca"];
         //random number of Polygram vertices  3 - 16
         let numberOfS = Math.floor((Math.random() * 14) + 3);
@@ -91,6 +93,9 @@ export class Controller {
             green: Math.floor(Math.random() * 256),
             blue: Math.floor(Math.random() * 256)
         }
+        rndSpeed = ($('#rndSpeed').prop('checked'))
+            ? Math.floor(Math.random() * parseInt($("#speed").val()) + 1)
+            : parseInt($("#speed").val());
         let x = Math.floor(Math.random() * (maxX - minX) + minX);
         let y = Math.floor(Math.random() * (maxY - minY) + minY);
         let r = Math.floor(Math.random() * (maxR - minR) + minR);
@@ -110,8 +115,8 @@ export class Controller {
         shape.x = x;
         shape.y = y;
         shape.bullet = false;
-        shape.dx = direction[Math.floor(Math.random() * 2)];
-        shape.dy = direction[Math.floor(Math.random() * 2)];
+        shape.dx = direction[Math.floor(Math.random() * 2)] * rndSpeed;
+        shape.dy = direction[Math.floor(Math.random() * 2)] * rndSpeed;
         shape.r = r;
         shape.s = numberOfS;
         return shape;
@@ -254,6 +259,16 @@ export class Controller {
             this.shapeSetAttr();
         });
 
+        $("#rndSpeed, #speed").on("input", (e) => {
+            let direction = [-1, 1];
+            $("#speedLegend").html(`(Random) Speed Range between 1 to ${$("#speed").val()}`);
+            for (let i = 0; i < this.shapeSet.length; i++) {
+                rndSpeed = ($('#rndSpeed').prop('checked')) ? Math.floor(Math.random() * parseInt($("#speed").val()) + 1) : parseInt($("#speed").val());
+                this.shapeSet[i].dx = direction[Math.floor(Math.random() * 2)] * rndSpeed;
+                this.shapeSet[i].dy = direction[Math.floor(Math.random() * 2)] * rndSpeed;
+            }
+        });
+
         $("#rotate, #radius, #vert, .colClass,.fsVisu").on("click input", (e) => {
             if (e.currentTarget.id == "vert") {
                 this.shape.angle = 0;
@@ -294,7 +309,6 @@ export class Controller {
     shapeSetAttr() {
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
-            this.shapeSet[i].dy = this.shapeSet[i].dx = (this.shapeSet[i].dx < 0) ? -parseInt($("#speed").val()) : parseInt($("#speed").val());
             this.shapeSet[i].stroke = $('#strokeSet').prop('checked');
             this.shapeSet[i].showAttr = $('#showAttr').prop('checked');
             this.shapeSet[i].showAllAttr = $('#showAllAttr').prop('checked');
@@ -387,8 +401,7 @@ export class Controller {
             if (i !== 0) {
                 if (!this.shapeSet[i].drag) {
                     this.shapeSet[i].moveShape();
-                    let speedVal = Math.pow(parseInt($("#speed").val()), 2);
-                    this.shapeSet[i].distance += Math.floor(Math.sqrt(2 * speedVal));
+                    this.shapeSet[i].distance += Math.floor(Math.sqrt(Math.pow(this.shapeSet[i].dx, 2) + Math.pow(this.shapeSet[i].dy, 2)));
                 }
             }
             if (this.shapeSet[i].s > 2) {
