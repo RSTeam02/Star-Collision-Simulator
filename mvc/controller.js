@@ -259,11 +259,11 @@ export class Controller {
             this.shapeSetAttr();
         });
 
-        $("#rndSpeed, #speed").on("input click", (e) => {
+        $("#rndSpeed, #speed").on("input", (e) => {
             let direction = [-1, 1];
             $("#speedLegend").html(`(Random) Speed Range between 1 to ${$("#speed").val()}`);
             for (let i = 0; i < this.shapeSet.length; i++) {
-                rndSpeed = ($('#rndSpeed').prop('checked')) ? Math.floor(Math.random() * parseInt($("#speed").val()) + 1) : parseInt($("#speed").val());
+                let rndSpeed = ($('#rndSpeed').prop('checked')) ? Math.floor(Math.random() * parseInt($("#speed").val()) + 1) : parseInt($("#speed").val());
                 this.shapeSet[i].dx = direction[Math.floor(Math.random() * 2)] * rndSpeed;
                 this.shapeSet[i].dy = direction[Math.floor(Math.random() * 2)] * rndSpeed;
             }
