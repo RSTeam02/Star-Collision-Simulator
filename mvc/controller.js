@@ -194,9 +194,6 @@ export class Controller {
             this.time = currentTime;
 
         });
-        $("#selectObj").on("click", () => {
-
-        });
 
     }
 
@@ -266,8 +263,6 @@ export class Controller {
                     this.shapeSet[i] = this.rndShape();
                     this.shapeSet[i].id = i;
                 }
-                //this.updateDropDownList();
-
             }
             this.shapeSetAttr();
         });
