@@ -107,6 +107,8 @@
             <br>
             <input type="button" value="start/pause" id="startPause" />
             <br>
+            
+
             <input type="checkbox" id="strokeSet" class="fsSim" checked />stroke
             <br>
             <input type="checkbox" id="fillSet" class="fsSim" checked />fill
@@ -119,10 +121,16 @@
             <br>
             <input type="checkbox" id="showAllAttr" class="fsSim" />all shape info
             <br>
-            <input type="checkbox" id="colllog" checked />collision log           
+            <input type="checkbox" id="colllog" checked />collision log
+            <br><br>
             <fieldset>
-                <legend id="speedLegend"></legend>               
-                1<input type="range" id="speed" value="5" min="1" max="10" class="fsSim" />10 <input type="checkbox" id="rndSpeed" checked />random
+                    <legend>User keyboard controls</legend>
+                    <input type="checkbox" id="objCtrl" />Assign controls to ObjectId: <span id= "idNo"></span>
+                </fieldset>
+            <fieldset>
+                <legend id="speedLegend"></legend>
+                1<input type="range" id="speed" value="5" min="1" max="10" class="fsSim" />10
+                <input type="checkbox" id="rndSpeed" checked />random
             </fieldset>
 
         </form>

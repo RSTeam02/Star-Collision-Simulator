@@ -8,6 +8,7 @@
 export class ShapeStatus {
 
     constructor(shapeInfo) {
+        this.objId =0;
         this.x = 0;
         this.y = 0;
         this.dx = 0;

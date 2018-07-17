@@ -2,6 +2,9 @@
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 
++ 17.07:
+    - assign keyboard controls to any shape by clicking on it and enabling the checkbox, show in span tag which object is under user control 
+
 + 14.07:
     - check random checkbox to assign random speed for each object, if not checked, every obj gets equal speed chosen by range slider   
     - if canvas bound is reached => stop counting distance, distinguish between diagonal and non-diagonal controls (keyboard control with arrows)  

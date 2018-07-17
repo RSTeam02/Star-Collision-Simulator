@@ -17,6 +17,7 @@ import { Polygram } from "./polygram.js";
 export class Controller {
 
     constructor() {
+
         this.view = new View();
         this.shapeSet = [];
         this.shape = new Polygram();
@@ -26,6 +27,7 @@ export class Controller {
             blue: $("#blue").val(Math.random() * 256)
         }
         $("#speedLegend").html(`(Random) Speed Range between 1 to ${$("#speed").val()}`);
+        this.pointShapeId = "";
         this.diagonal = false;
         this.to;
         this.time = 0;
@@ -146,6 +148,8 @@ export class Controller {
                     for (let i = 0; i < this.shapeSet.length; i++) {
                         if (this.cursorPointObj(mx, my, this.shapeSet[i])) {
                             this.shapeSet[i].drag = true;
+                            this.pointShapeId = this.shapeSet[i].id;
+                            $("#idNo").html(this.pointShapeId);
                         }
                     }
                 }
@@ -190,12 +194,17 @@ export class Controller {
             this.time = currentTime;
 
         });
+        $("#selectObj").on("click", () => {
+
+        });
+
     }
 
     /**
      * used keycodes (arrow keys, ctrl)
      */
     keyListener() {
+
         $("#colllog").click(function () {
             (this.checked) ? $("#info").show() : $("#info").hide();
         });
@@ -239,6 +248,7 @@ export class Controller {
         $("#generate, .fsSim").on("click", (e) => {
             //select number of shapes
             if (e.currentTarget.id === "generate") {
+
                 $("#info").html("");
                 this.shapeSet = [];
                 let currentVal = parseInt($("#numb").val());
@@ -254,7 +264,10 @@ export class Controller {
                 $("#numb").val(numOfObj)
                 for (let i = 0; i < numOfObj; i++) {
                     this.shapeSet[i] = this.rndShape();
+                    this.shapeSet[i].id = i;
                 }
+                //this.updateDropDownList();
+
             }
             this.shapeSetAttr();
         });
@@ -293,6 +306,7 @@ export class Controller {
             }
         });
     }
+
 
     mouseMoveSpeed(current, last) {
         let distance = this.objDistance(current, last);
@@ -374,12 +388,17 @@ export class Controller {
      * draft every frame, check collision of every shape
      */
     updateFrameSet() {
-        this.userControl(this.shapeSet[0]);
+
         this.view.ctxSet.clearRect(0, 0, this.canvasW_Set, this.canvasH_Set);
         for (let i = 0; i < this.shapeSet.length; i++) {
             this.view.displayShapeSet(this.shapeSet[i]);
+
+            if (this.shapeSet[i].id == this.pointShapeId && $('#objCtrl').prop('checked')) {
+                this.userControl(this.shapeSet[i]);
+            }
+
             if (this.bullet.x < this.canvasW_Set) {
-                if (i !== 0) {
+                if (this.shapeSet[i].id !== this.pointShapeId) {
                     if (!this.bullet.hit) {
                         this.bullet.moveShape();
                         this.bulletCollShape(this.bullet, this.shapeSet[i]);
@@ -398,7 +417,7 @@ export class Controller {
                 this.shapeSet[i].dy = this.shapeSet[i].dx = 0;
             }
             this.bounceShape(this.shapeSet[i]);
-            if (i !== 0) {
+            if (this.shapeSet[i].id !== this.pointShapeId || !$('#objCtrl').prop('checked')) {
                 if (!this.shapeSet[i].drag) {
                     this.shapeSet[i].moveShape();
                     this.shapeSet[i].distance += Math.floor(Math.sqrt(Math.pow(this.shapeSet[i].dx, 2) + Math.pow(this.shapeSet[i].dy, 2)));
@@ -434,11 +453,9 @@ export class Controller {
             this.nextBullet = true;
             $("#info").prepend(`<pre>${shape.name} was pulverized by a ${bullet.name}</pre>`);
             shape.explosion = true;
+            var index = this.shapeSet.indexOf(shape);
             setTimeout(() => {
-                var index = this.shapeSet.indexOf(shape);
-                if (index >= 0) {
-                    this.shapeSet.splice(index, 1);
-                }
+                this.shapeSet.splice(index, 1);
             }, 1500);
             bullet.hit = true;
         } else {
