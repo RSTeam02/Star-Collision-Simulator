@@ -2,6 +2,9 @@
 
 Test-Link: https://rsteam02.github.io/Star-Collision-Simulator/
 
++ 22.07:
+    - simulate shape to shape collsion physics (alternating angles of shapes when colliding)
+    - alternating rotation speeds dependent on collision angle 
 + 17.07:
     - assign keyboard controls to any shape by clicking on it and enabling the checkbox, show in span tag which object is under user control 
 

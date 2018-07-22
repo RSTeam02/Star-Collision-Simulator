@@ -8,7 +8,7 @@
 export class ShapeStatus {
 
     constructor(shapeInfo) {
-        this.objId =0;
+        this.objId = 0;
         this.x = 0;
         this.y = 0;
         this.dx = 0;
@@ -30,6 +30,7 @@ export class ShapeStatus {
         this.stroke = false;
         this.fill = false;
         this.distance = 0;
+
     }
 
     visualNoise() {
@@ -43,27 +44,29 @@ export class ShapeStatus {
         this.y += this.dy;
     }
 
+    /**
+     * simulation of alternating rotation speed dependent on angle
+     */
     rotateDir() {
         if (this.s > 2) {
-            this.rotate = -this.rotate;
+            this.rotate = -this.angle * this.r;
         }
     }
 
     shapeCollision(shape) {
-        var collided = false;
+        this.collided = false;
+
         //a polygon or polygram with s > 2 is an approx. circle
         if (shape.s > 2 || shape.shapeInfo == "circle" && this.shapeInfo == "rectangle") {
             if (this.x < shape.r + shape.x &&
                 this.x + this.w > shape.x - shape.r &&
                 this.y < shape.y + shape.r &&
                 this.h + this.y > shape.y - shape.r) {
+                this.collided = true;
                 if (!this.bullet) {
-                    shape.dx = -shape.dx;
-                    shape.dy = -shape.dy;
-                    this.dx = -this.dx;
-                    this.dy = -this.dy;
+                    this.bounceObj(shape);
                 }
-                collided = true;
+
             }
 
         } else if (this.s > 2 || this.shapeInfo == "circle" && shape.shapeInfo == "rectangle") {
@@ -71,37 +74,32 @@ export class ShapeStatus {
                 shape.x + shape.w > this.x - this.r &&
                 shape.y < this.y + this.r &&
                 shape.h + shape.y > this.y - this.r) {
+                this.collided = true;
                 if (!this.bullet) {
-                    shape.dx = -shape.dx;
-                    shape.dy = -shape.dy;
-                    this.dx = -this.dx;
-                    this.dy = -this.dy;
+                    this.bounceObj(shape);
                 }
-                collided = true;
+
             }
         } else if (shape.shapeInfo == "circle" || shape.s > 2 &&
             this.shapeInfo == "circle" || this.s > 2) {
             var distance = Math.sqrt(Math.pow((this.x - shape.x), 2) + Math.pow((this.y - shape.y), 2))
             if (distance < shape.r + this.r) {
+                this.collided = true;
+
                 if (!this.bullet) {
-                    shape.dx = -shape.dx;
-                    shape.dy = -shape.dy;
-                    this.dx = -this.dx;
-                    this.dy = -this.dy;
+                    this.bounceObj(shape);
                 }
-                collided = true;
+
             }
         } else if (this.shapeInfo == "circle" || this.s > 2 &&
             shape.shapeInfo == "circle" || shape.s > 2) {
             var distance = Math.sqrt(Math.pow((this.x - shape.x), 2) + Math.pow((this.y - shape.y), 2))
             if (distance < this.r + shape.r) {
+                this.collided = true;
                 if (!this.bullet) {
-                    shape.dx = -shape.dx;
-                    shape.dy = -shape.dy;
-                    this.dx = -this.dx;
-                    this.dy = -this.dy;
+                    this.bounceObj(shape);
                 }
-                collided = true;
+
             }
             //rectangle && rectangle
         } else {
@@ -109,18 +107,31 @@ export class ShapeStatus {
                 this.x + this.w > shape.x &&
                 this.y < shape.y + shape.h &&
                 this.h + this.y > shape.y) {
+                this.collided = true;
                 if (!this.bullet) {
-                    this.dx = -this.dx;
-                    this.dy = -this.dy;
-                    shape.dx = -shape.dx;
-                    shape.dy = -shape.dy;
+                    this.bounceObj(shape);
                 }
-                collided = true;
+
             }
         }
+        return this.collided;
+    }
 
-        return collided;
+    /**
+     * bouncing physics simulation between shapes with alternating angles
+     * tutorial reference: 
+     * https://stackoverflow.com/questions/30497287/elastic-2d-ball-collision-using-angles
+     */
 
+    bounceObj(shape) {
+        var minDistance = this.r + shape.r;
+        var relDistX = shape.x - this.x;
+        var relDistY = shape.y - this.y;
+        this.angle = Math.atan2(relDistY, relDistX);
+        shape.dx -= Math.cos(this.angle);
+        shape.dy -= Math.sin(this.angle);
+        this.dx += Math.cos(this.angle);
+        this.dy += Math.sin(this.angle);
     }
 
 }
